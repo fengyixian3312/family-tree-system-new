@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家譜系統 - 登入</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Ma+Shan+Zheng&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Noto Serif TC',serif;background:#f5f0e8;min-height:100vh;display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,#c4a882 39px,#c4a882 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#c4a882 39px,#c4a882 40px);background-size:40px 40px;}
+        .login-box{background:#f5f0e8;border:2px solid #8b7355;border-top:4px solid #8b1a1a;padding:50px 40px;width:400px;box-shadow:0 20px 60px rgba(26,16,8,.2);}
+        .login-title{font-family:'Ma Shan Zheng',serif;font-size:2.2rem;color:#8b1a1a;text-align:center;letter-spacing:.3em;margin-bottom:6px;}
+        .login-sub{text-align:center;font-size:.82rem;color:#8b7355;letter-spacing:.2em;margin-bottom:36px;}
+        .form-group{margin-bottom:20px;}
+        .form-label{display:block;font-size:.82rem;color:#8b7355;margin-bottom:7px;letter-spacing:.1em;}
+        .form-input{width:100%;border:1px solid #8b7355;background:white;padding:11px 14px;font-family:'Noto Serif TC',serif;font-size:.95rem;color:#1a1008;border-radius:2px;}
+        .form-input:focus{outline:none;border-color:#b8860b;box-shadow:0 0 0 2px rgba(184,134,11,.15);}
+        .login-btn{width:100%;background:#1a1008;color:#f5f0e8;border:none;padding:13px;font-family:'Noto Serif TC',serif;font-size:1rem;letter-spacing:.2em;cursor:pointer;border-radius:2px;margin-top:8px;transition:background .2s;}
+        .login-btn:hover{background:#8b1a1a;}
+        .error-msg{background:#fdf0f0;border-left:3px solid #c0392b;padding:10px 14px;font-size:.85rem;color:#c0392b;margin-bottom:18px;display:none;}
+        .error-msg.show{display:block;}
+        .dec{text-align:center;color:#b8860b;font-size:1.5rem;margin-bottom:16px;opacity:.6;}
+    </style>
+</head>
+<body>
+<div class="login-box">
+    <div class="dec">龍 鳳</div>
+    <div class="login-title">家　譜　系　統</div>
+    <div class="login-sub">傳承先祖之德・弘揚家族精神</div>
+    <div class="error-msg" id="errMsg">帳號或密碼錯誤，請重試</div>
+    <form action="/api/auth/login" method="post">
+        <div class="form-group">
+            <label class="form-label">帳　號</label>
+            <input type="text" name="username" class="form-input" placeholder="請輸入帳號" required autofocus>
+        </div>
+        <div class="form-group">
+            <label class="form-label">密　碼</label>
+            <input type="password" name="password" class="form-input" placeholder="請輸入密碼" required>
+        </div>
+        <button type="submit" class="login-btn">登　入</button>
+    </form>
+</div>
+<script>
+    if(location.search.includes('error')) {
+      document.getElementById('errMsg').classList.add('show');
+    }
+</script>
+</body>
+</html>
