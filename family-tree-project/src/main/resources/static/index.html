@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家譜管理系統</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700;900&family=Ma+Shan+Zheng&display=swap');
+
+:root {
+  --ink: #1a1008;
+  --ink-light: #3d2b1a;
+  --paper: #f5f0e8;
+  --paper-dark: #ede5d0;
+  --paper-darker: #d9cdb5;
+  --red: #8b1a1a;
+  --red-light: #c0392b;
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --line: #8b7355;
+  --line-light: #c4a882;
+  --shadow: rgba(26, 16, 8, 0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Serif TC', serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, var(--line-light) 39px, var(--line-light) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, var(--line-light) 39px, var(--line-light) 40px);
+  background-size: 40px 40px;
+}
+
+/* Header */
+.header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0;
+  text-align: center;
+  position: relative;
+  border-bottom: 4px solid var(--gold);
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(184,134,11,0.05) 10px, rgba(184,134,11,0.05) 20px);
+}
+.header-inner {
+  position: relative;
+  z-index: 1;
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 2.8rem;
+  letter-spacing: 0.3em;
+  color: var(--gold-light);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+.header-sub {
+  font-size: 0.85rem;
+  color: var(--line-light);
+  letter-spacing: 0.2em;
+  margin-top: 4px;
+}
+.header-dec {
+  font-size: 2rem;
+  color: var(--gold);
+  opacity: 0.6;
+}
+
+/* Navigation */
+.nav {
+  background: var(--ink-light);
+  display: flex;
+  gap: 2px;
+  padding: 0 20px;
+  border-bottom: 2px solid var(--gold);
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--paper-dark);
+  padding: 12px 24px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.nav-btn:hover, .nav-btn.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold-light);
+  background: rgba(184,134,11,0.08);
+}
+
+/* Main Layout */
+.main { display: flex; min-height: calc(100vh - 120px); }
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background: var(--paper-dark);
+  border-right: 2px solid var(--line);
+  padding: 20px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+  position: sticky;
+  top: 0;
+}
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.15em;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+/* Search */
+.search-box {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.search-box input {
+  flex: 1;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 8px 12px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  border-radius: 2px;
+}
+.search-box input:focus { outline: none; border-color: var(--gold); }
+.btn-sm {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.85rem;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.btn-sm:hover { background: var(--red); }
+.btn-sm.gold { background: var(--gold); }
+.btn-sm.gold:hover { background: var(--gold-light); }
+
+/* Generation filter */
+.gen-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.gen-tag {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.gen-tag:hover, .gen-tag.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* Member list in sidebar */
+.member-list { list-style: none; }
+.member-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--paper-darker);
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+.member-item:hover { background: var(--paper); }
+.member-item.selected { background: var(--ink); color: var(--paper); }
+.member-item .gen-badge {
+  font-size: 0.7rem;
+  background: var(--line);
+  color: var(--paper);
+  padding: 1px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.member-item.selected .gen-badge { background: var(--gold); }
+
+/* Content area */
+.content { flex: 1; overflow: auto; }
+
+/* View panels */
+.view-panel { display: none; }
+.view-panel.active { display: block; }
+
+/* ========== GENEALOGY BOOK VIEW ========== */
+.genealogy-book {
+  padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Traditional vertical-scroll style page */
+.gen-page {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-right: 3px solid var(--ink);
+  width: 160px;
+  min-height: 500px;
+  padding: 20px 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: 'Noto Serif TC', serif;
+  box-shadow: 3px 0 8px var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-right: 2px;
+}
+.gen-page:hover {
+  transform: translateY(-3px);
+  box-shadow: 3px 6px 16px var(--shadow);
+  z-index: 10;
+}
+.gen-page.selected {
+  background: #fdf5e6;
+  border-right-color: var(--red);
+  box-shadow: 3px 0 16px rgba(139,26,26,0.25);
+}
+
+/* Generation header strip (世) */
+.gen-page .gen-num {
+  writing-mode: vertical-rl;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--red);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  text-align: center;
+  font-family: 'Ma Shan Zheng', serif;
+}
+
+.gen-page .title-line {
+  font-size: 0.75rem;
+  color: var(--line);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.gen-page .name-main {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--ink);
+  margin-bottom: 12px;
+  font-family: 'Ma Shan Zheng', serif;
+}
+
+.gen-page .detail-text {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  line-height: 1.8;
+  letter-spacing: 0.05em;
+}
+
+.gen-page .spouse-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line-light);
+}
+
+.gen-page .spouse-label {
+  font-size: 0.75rem;
+  color: var(--line);
+}
+
+.gen-page .filial-section {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.gen-page .worshipped {
+  font-size: 0.7rem;
+  color: var(--red);
+  margin-top: 8px;
+}
+
+/* Group by generation */
+.gen-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-right: 8px;
+}
+.gen-group-header {
+  background: var(--ink);
+  color: var(--gold-light);
+  writing-mode: vertical-rl;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  padding: 16px 8px;
+  text-align: center;
+  min-height: 100px;
+  border-radius: 2px 0 0 2px;
+}
+
+/* ========== TREE VIEW ========== */
+.tree-view-container {
+  padding: 30px;
+  overflow-x: auto;
+}
+.tree-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.5rem;
+  color: var(--red);
+  letter-spacing: 0.2em;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 10px;
+}
+.tree-wrap { display: flex; flex-direction: column; gap: 0; }
+.tree-level {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.tree-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--red);
+  padding: 10px 14px;
+  min-width: 100px;
+  max-width: 130px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 2px 2px 6px var(--shadow);
+  margin: 8px;
+}
+.tree-card:hover { border-top-color: var(--gold); box-shadow: 2px 4px 12px var(--shadow); }
+.tree-card.selected { background: var(--ink); color: var(--paper); }
+.tree-card .tc-gen { font-size: 0.7rem; color: var(--red); margin-bottom: 2px; }
+.tree-card.selected .tc-gen { color: var(--gold-light); }
+.tree-card .tc-name { font-family: 'Ma Shan Zheng', serif; font-size: 1.2rem; }
+.tree-card .tc-dates { font-size: 0.65rem; color: var(--line); margin-top: 3px; }
+.tree-card.selected .tc-dates { color: var(--line-light); }
+.tree-line-v {
+  width: 2px;
+  height: 20px;
+  background: var(--line);
+  margin: 0 auto;
+}
+.tree-line-h {
+  height: 2px;
+  background: var(--line);
+  position: absolute;
+  top: 0;
+}
+.tree-children {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+.tree-children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--line);
+}
+
+/* ========== DETAIL PANEL ========== */
+.detail-panel {
+  width: 360px;
+  background: var(--paper);
+  border-left: 2px solid var(--line);
+  padding: 24px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+  position: sticky;
+  top: 0;
+}
+.detail-panel.hidden { display: none; }
+
+.detail-scroll {
+  font-family: 'Noto Serif TC', serif;
+  writing-mode: horizontal-tb;
+}
+
+.detail-header {
+  text-align: center;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+.detail-gen {
+  font-size: 0.85rem;
+  color: var(--red);
+  letter-spacing: 0.2em;
+  margin-bottom: 4px;
+}
+.detail-title-label {
+  font-size: 0.8rem;
+  color: var(--line);
+}
+.detail-name {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 2.8rem;
+  color: var(--ink);
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  margin: 8px 0;
+}
+.detail-section {
+  margin-bottom: 16px;
+}
+.detail-section-title {
+  font-size: 0.75rem;
+  color: var(--red);
+  letter-spacing: 0.2em;
+  border-bottom: 1px dashed var(--line-light);
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+.detail-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+.detail-label {
+  color: var(--line);
+  flex-shrink: 0;
+  min-width: 70px;
+  font-size: 0.8rem;
+}
+.detail-value { color: var(--ink); }
+
+.detail-note {
+  background: var(--paper-dark);
+  border-left: 3px solid var(--gold);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-light);
+}
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--red); }
+.btn-danger { background: #c0392b; color: white; }
+.btn-danger:hover { background: #922b21; }
+.btn-secondary { background: var(--paper-dark); color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { background: var(--paper-darker); }
+
+/* ========== FORM / MODAL ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,16,8,0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+
+.modal {
+  background: var(--paper);
+  border: 2px solid var(--line);
+  border-top: 4px solid var(--red);
+  padding: 30px;
+  width: 580px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.modal-title {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 1.6rem;
+  color: var(--red);
+  letter-spacing: 0.2em;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label {
+  font-size: 0.82rem;
+  color: var(--line);
+  letter-spacing: 0.1em;
+}
+.form-input, .form-select, .form-textarea {
+  border: 1px solid var(--line);
+  background: white;
+  padding: 8px 12px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  border-radius: 2px;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(184,134,11,0.15);
+}
+.form-textarea { resize: vertical; min-height: 70px; }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-light);
+  justify-content: flex-end;
+}
+
+/* Decorative ornaments */
+.ornament {
+  text-align: center;
+  color: var(--gold);
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+  padding: 10px 0;
+  opacity: 0.6;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 14px 24px;
+  border-left: 4px solid var(--gold);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 8px 24px var(--shadow);
+  z-index: 2000;
+  transform: translateX(120%);
+  transition: transform 0.3s ease;
+}
+.toast.show { transform: translateX(0); }
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--line);
+  font-size: 1.2rem;
+  letter-spacing: 0.3em;
+}
+
+/* Stats bar */
+.stats-bar {
+  background: var(--paper-dark);
+  border-bottom: 1px solid var(--line);
+  padding: 8px 30px;
+  display: flex;
+  gap: 30px;
+  font-size: 0.82rem;
+  color: var(--ink-light);
+}
+.stat-item { display: flex; gap: 6px; align-items: center; }
+.stat-num { font-weight: 700; color: var(--red); font-size: 1rem; }
+
+/* Responsive scroll hint */
+.scroll-hint {
+  text-align: center;
+  color: var(--line);
+  font-size: 0.75rem;
+  padding: 8px;
+  letter-spacing: 0.1em;
+}
+
+/* Generation colors */
+.gen-1 { border-top-color: #8b1a1a; }
+.gen-2 { border-top-color: #b8860b; }
+.gen-3 { border-top-color: #2e6b4f; }
+.gen-4 { border-top-color: #1a3d6b; }
+.gen-5 { border-top-color: #5c3d7a; }
+.gen-6 { border-top-color: #6b3a1a; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-dec">龍</div>
+    <div>
+      <div class="header-title">家　譜　管　理　系　統</div>
+      <div class="header-sub">傳承先祖之德・弘揚家族精神</div>
+    </div>
+    <div class="header-dec">鳳</div>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button class="nav-btn active" onclick="switchView('book')">📜 譜牒檢視</button>
+  <button class="nav-btn" onclick="switchView('tree')">🌳 世系圖</button>
+  <button class="nav-btn" onclick="switchView('list')">📋 族員列表</button>
+  <div style="flex:1"></div>
+  <button class="nav-btn gold" onclick="showAddModal()">✚ 新增族員</button>
+  <button class="nav-btn" onclick="initData()" style="color:#d4a017">⟳ 載入示例</button>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item">族員總數：<span class="stat-num" id="statTotal">0</span></div>
+  <div class="stat-item">世代數：<span class="stat-num" id="statGens">0</span></div>
+  <div class="stat-item">男丁：<span class="stat-num" id="statMale">0</span></div>
+  <div class="stat-item">女眷：<span class="stat-num" id="statFemale">0</span></div>
+</div>
+
+<!-- Main Layout -->
+<div class="main">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-title">🔍 搜尋族員</div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="輸入名諱..." onkeyup="onSearchKey(event)">
+      <button class="btn-sm" onclick="doSearch()">搜</button>
+      <button class="btn-sm gold" onclick="clearSearch()">清</button>
+    </div>
+
+    <div class="sidebar-title">世代篩選</div>
+    <div class="gen-filter" id="genFilter">
+      <span class="gen-tag active" onclick="filterGen(0, this)">全部</span>
+    </div>
+
+    <div class="sidebar-title">族員名錄</div>
+    <ul class="member-list" id="memberList">
+      <li class="loading" style="font-size:0.8rem;padding:20px 0">載入中...</li>
+    </ul>
+  </div>
+
+  <!-- Book View -->
+  <div id="view-book" class="view-panel active content">
+    <div class="scroll-hint">← 橫向捲動閱覽 →</div>
+    <div class="genealogy-book" id="genealogyBook">
+      <div class="loading">載入族譜中，請稍候...</div>
+    </div>
+  </div>
+
+  <!-- Tree View -->
+  <div id="view-tree" class="view-panel content">
+    <div class="tree-view-container">
+      <div class="tree-title">世系傳承圖</div>
+      <div id="treeView"></div>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div id="view-list" class="view-panel content">
+    <div style="padding:30px">
+      <table style="width:100%;border-collapse:collapse;font-size:0.88rem">
+        <thead>
+          <tr style="background:var(--ink);color:var(--paper)">
+            <th style="padding:10px 14px;text-align:left;letter-spacing:0.1em">世</th>
+            <th style="padding:10px 14px;text-align:left">名諱</th>
+            <th style="padding:10px 14px;text-align:left">稱謂</th>
+            <th style="padding:10px 14px;text-align:left">生卒</th>
+            <th style="padding:10px 14px;text-align:left">配偶</th>
+            <th style="padding:10px 14px;text-align:left">備注</th>
+            <th style="padding:10px 14px;text-align:center">操作</th>
+          </tr>
+        </thead>
+        <tbody id="listTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel hidden" id="detailPanel">
+    <div class="detail-scroll" id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">新增族員</div>
+    <input type="hidden" id="formId">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">名諱 *</label>
+        <input type="text" class="form-input" id="fName" placeholder="名字">
+      </div>
+      <div class="form-group">
+        <label class="form-label">字號</label>
+        <input type="text" class="form-input" id="fCourtesy" placeholder="字號">
+      </div>
+      <div class="form-group">
+        <label class="form-label">性別</label>
+        <select class="form-select" id="fGender">
+          <option value="男">男</option>
+          <option value="女">女</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">世代 *</label>
+        <input type="number" class="form-input" id="fGeneration" placeholder="1,2,3..." min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">稱謂</label>
+        <input type="text" class="form-input" id="fTitle" placeholder="如：祖 諱">
+      </div>
+      <div class="form-group">
+        <label class="form-label">父親</label>
+        <select class="form-select" id="fParentId">
+          <option value="">（無，為始祖）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">生年</label>
+        <input type="text" class="form-input" id="fBirthDate" placeholder="如：清道光年間">
+      </div>
+      <div class="form-group">
+        <label class="form-label">卒年</label>
+        <input type="text" class="form-input" id="fDeathDate" placeholder="如：清咸豐年間">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">生卒備注</label>
+        <input type="text" class="form-input" id="fBirthDeathNote" placeholder="如：生卒俱失考">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">關係描述</label>
+        <input type="text" class="form-input" id="fRelationDesc" placeholder="如：有禄公之五子也">
+      </div>
+      <div class="form-group">
+        <label class="form-label">配偶（妣）</label>
+        <input type="text" class="form-input" id="fSpouseMaiden" placeholder="妣/氏">
+      </div>
+      <div class="form-group">
+        <label class="form-label">配偶姓名</label>
+        <input type="text" class="form-input" id="fSpouseName" placeholder="配偶名">
+      </div>
+      <div class="form-group">
+        <label class="form-label">配偶備注</label>
+        <input type="text" class="form-input" id="fSpouseNote" placeholder="如：失記">
+      </div>
+      <div class="form-group">
+        <label class="form-label">孝男</label>
+        <input type="text" class="form-input" id="fFilialSons" placeholder="兒子名">
+      </div>
+      <div class="form-group">
+        <label class="form-label">生子人數</label>
+        <input type="number" class="form-input" id="fChildrenCount" placeholder="0" min="0">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">奉祀者</label>
+        <input type="text" class="form-input" id="fWorshippedBy" placeholder="如：孝男鐘奉祀">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">備注</label>
+        <textarea class="form-textarea" id="fNotes" placeholder="其他備注事項..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveMember()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api/family';
+let allMembers = [];
+let selectedId = null;
+let currentView = 'book';
+let filterGenNum = 0;
+
+const CHINESE_NUMS = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+function toChineseGen(n) { return (n >= 1 && n <= 12) ? CHINESE_NUMS[n-1] : n; }
+
+// ===== API =====
+async function api(path, method='GET', body=null) {
+  const opts = { method, headers: {'Content-Type':'application/json;charset=UTF-8'} };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function loadMembers() {
+  try {
+    allMembers = await api('');
+    renderStats();
+    renderSidebar();
+    renderGenFilter();
+    renderCurrentView();
+  } catch(e) { showToast('載入失敗: ' + e.message); }
+}
+
+async function initData() {
+  try {
+    await api('/init', 'POST');
+    showToast('示例數據已載入！');
+    await loadMembers();
+  } catch(e) { showToast('初始化失敗: ' + e.message); }
+}
+
+// ===== Stats =====
+function renderStats() {
+  const total = allMembers.length;
+  const gens = new Set(allMembers.map(m=>m.generation)).size;
+  const male = allMembers.filter(m=>m.gender==='男').length;
+  const female = allMembers.filter(m=>m.gender==='女').length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statGens').textContent = gens;
+  document.getElementById('statMale').textContent = male;
+  document.getElementById('statFemale').textContent = female;
+}
+
+// ===== Sidebar =====
+function renderSidebar(members = allMembers) {
+  const list = document.getElementById('memberList');
+  if (!members.length) { list.innerHTML = '<li style="padding:20px;color:var(--line);font-size:0.85rem">尚無族員資料</li>'; return; }
+  list.innerHTML = members.map(m => `
+    <li class="member-item ${selectedId===m.id?'selected':''}" onclick="selectMember(${m.id})">
+      <span class="gen-badge">${toChineseGen(m.generation)}世</span>
+      ${m.name}
+    </li>
+  `).join('');
+}
+
+function renderGenFilter() {
+  const gens = [...new Set(allMembers.map(m=>m.generation))].sort((a,b)=>a-b);
+  const filter = document.getElementById('genFilter');
+  filter.innerHTML = `<span class="gen-tag ${filterGenNum===0?'active':''}" onclick="filterGen(0,this)">全部</span>` +
+    gens.map(g => `<span class="gen-tag ${filterGenNum===g?'active':''}" onclick="filterGen(${g},this)">${toChineseGen(g)}世</span>`).join('');
+}
+
+function filterGen(gen, el) {
+  filterGenNum = gen;
+  document.querySelectorAll('.gen-tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = gen === 0 ? allMembers : allMembers.filter(m=>m.generation===gen);
+  renderSidebar(filtered);
+  renderCurrentView();
+}
+
+function onSearchKey(e) { if (e.key==='Enter') doSearch(); }
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { clearSearch(); return; }
+  try {
+    const res = await api('/search?name=' + encodeURIComponent(q));
+    renderSidebar(res);
+  } catch(e) {}
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  renderSidebar(allMembers);
+}
+
+// ===== Views =====
+function switchView(name) {
+  currentView = name;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.view-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  if (currentView === 'book') renderBookView();
+  else if (currentView === 'tree') renderTreeView();
+  else if (currentView === 'list') renderListView();
+}
+
+// ===== BOOK VIEW (Traditional Genealogy Style) =====
+function renderBookView() {
+  const container = document.getElementById('genealogyBook');
+  const members = filterGenNum === 0 ? allMembers : allMembers.filter(m=>m.generation===filterGenNum);
+
+  if (!members.length) {
+    container.innerHTML = `<div class="loading" style="padding:80px;color:var(--line)">
+      <div style="font-size:3rem;margin-bottom:20px">📜</div>
+      <div>尚無族員資料</div>
+      <div style="font-size:0.8rem;margin-top:10px">請點擊「載入示例」或「新增族員」開始</div>
+    </div>`;
+    return;
+  }
+
+  // Group by generation
+  const byGen = {};
+  members.forEach(m => {
+    if (!byGen[m.generation]) byGen[m.generation] = [];
+    byGen[m.generation].push(m);
+  });
+
+  const gens = Object.keys(byGen).map(Number).sort((a,b)=>a-b);
+
+  container.innerHTML = gens.map(gen => {
+    const genMembers = byGen[gen];
+    const pages = genMembers.map(m => renderBookPage(m)).join('');
+    return `
+      <div style="display:flex;align-items:stretch;margin-right:16px">
+        <div class="gen-group-header">${toChineseGen(gen)}&nbsp;世</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;padding:8px">
+          ${pages}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderBookPage(m) {
+  const isSelected = selectedId === m.id;
+  const genClass = `gen-${Math.min(m.generation, 6)}`;
+
+  let content = `<div class="gen-page ${isSelected?'selected':''} ${genClass}" onclick="selectMember(${m.id})" id="page-${m.id}">`;
+
+  // Title & Name
+  if (m.title) content += `<div class="title-line">${m.title}</div>`;
+  content += `<div class="name-main">${m.name}</div>`;
+
+  // Relation description
+  if (m.relationDesc) {
+    content += `<div class="detail-text">${m.relationDesc}</div>`;
+  }
+
+  // Birth/Death
+  if (m.birthDeathNote) {
+    content += `<div class="detail-text" style="color:var(--line);margin-top:8px">${m.birthDeathNote}</div>`;
+  } else {
+    if (m.birthDate) content += `<div class="detail-text">生：${m.birthDate}</div>`;
+    if (m.deathDate) content += `<div class="detail-text">卒：${m.deathDate}</div>`;
+  }
+
+  // Spouse section
+  if (m.spouseMaidenName || m.spouseName) {
+    content += `<div class="spouse-section">`;
+    content += `<div class="spouse-label">${m.spouseMaidenName||'妣'}</div>`;
+    if (m.spouseNote) content += `<div class="detail-text">${m.spouseNote}</div>`;
+    if (m.spouseName && m.spouseName !== '失記') content += `<div class="detail-text">${m.spouseName}</div>`;
+    if (m.childrenCount) content += `<div class="detail-text">生子${m.childrenCount}人</div>`;
+    content += `</div>`;
+  }
+
+  // Filial sons / worshipped by
+  content += `<div class="filial-section">`;
+  if (m.filialSons) content += `<div class="detail-text">孝男${m.filialSons}</div>`;
+  if (m.worshippedBy) content += `<div class="worshipped">${m.worshippedBy}</div>`;
+  content += `</div>`;
+
+  content += `</div>`;
+  return content;
+}
+
+// ===== TREE VIEW =====
+async function renderTreeView() {
+  const container = document.getElementById('treeView');
+  try {
+    const tree = await api('/tree');
+    if (!tree.length) { container.innerHTML = '<div class="loading">尚無資料</div>'; return; }
+    container.innerHTML = '<div style="overflow-x:auto"><div style="display:inline-flex;flex-direction:column;align-items:center;min-width:max-content;padding:20px">' + renderTreeNodes(tree) + '</div></div>';
+  } catch(e) { container.innerHTML = '<div class="loading" style="color:red">載入失敗</div>'; }
+}
+
+function renderTreeNodes(nodes) {
+  if (!nodes || !nodes.length) return '';
+
+  return `<div style="display:flex;align-items:flex-start;gap:8px;position:relative">
+    ${nodes.map(node => renderTreeNode(node)).join('')}
+  </div>`;
+}
+
+function renderTreeNode(node) {
+  const hasChildren = node.children && node.children.length > 0;
+  const genClass = `gen-${Math.min(node.generation, 6)}`;
+  const isSelected = selectedId === node.id;
+
+  let html = `<div style="display:flex;flex-direction:column;align-items:center">`;
+
+  // Card
+  html += `<div class="tree-card ${genClass} ${isSelected?'selected':''}" onclick="selectMember(${node.id})">
+    <div class="tc-gen">${toChineseGen(node.generation)}世</div>
+    <div class="tc-name">${node.name}</div>
+    ${node.birthDeathNote ? `<div class="tc-dates">${node.birthDeathNote}</div>` : ''}
+    ${node.spouseMaidenName && node.spouseName ? `<div class="tc-dates">配：${node.spouseName}</div>` : ''}
+  </div>`;
+
+  // Children
+  if (hasChildren) {
+    html += `<div class="tree-line-v"></div>`;
+    html += `<div style="display:flex;align-items:flex-start;gap:8px;padding-top:0;position:relative">`;
+
+    if (node.children.length > 1) {
+      html += `<div style="position:absolute;top:0;left:50px;right:50px;height:2px;background:var(--line)"></div>`;
+    }
+
+    html += node.children.map(child => renderTreeNode(child)).join('');
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+// ===== LIST VIEW =====
+function renderListView() {
+  const tbody = document.getElementById('listTableBody');
+  const members = filterGenNum === 0 ? allMembers : allMembers.filter(m=>m.generation===filterGenNum);
+
+  if (!members.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--line)">尚無資料</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = members.map((m, i) => `
+    <tr style="background:${i%2===0?'var(--paper)':'var(--paper-dark)'};border-bottom:1px solid var(--line-light)" onclick="selectMember(${m.id})" style="cursor:pointer">
+      <td style="padding:10px 14px;font-weight:700;color:var(--red)">${toChineseGen(m.generation)}世</td>
+      <td style="padding:10px 14px;font-family:'Ma Shan Zheng',serif;font-size:1.1rem">${m.name}</td>
+      <td style="padding:10px 14px;color:var(--line)">${m.title||'-'}</td>
+      <td style="padding:10px 14px;font-size:0.82rem">${m.birthDeathNote || (m.birthDate||'')+(m.deathDate?'—'+m.deathDate:'') || '-'}</td>
+      <td style="padding:10px 14px;font-size:0.82rem">${m.spouseName||m.spouseMaidenName||'-'}</td>
+      <td style="padding:10px 14px;font-size:0.82rem;color:var(--ink-light)">${m.relationDesc||m.notes||'-'}</td>
+      <td style="padding:10px 14px;text-align:center">
+        <button onclick="event.stopPropagation();showEditModal(${m.id})" style="background:var(--gold);color:white;border:none;padding:4px 10px;cursor:pointer;font-size:0.8rem;border-radius:2px;margin-right:4px">編輯</button>
+        <button onclick="event.stopPropagation();deleteMember(${m.id})" style="background:#c0392b;color:white;border:none;padding:4px 10px;cursor:pointer;font-size:0.8rem;border-radius:2px">刪除</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ===== SELECT & DETAIL =====
+function selectMember(id) {
+  selectedId = id;
+  const m = allMembers.find(x=>x.id===id);
+  if (!m) return;
+
+  // Update sidebar selection
+  document.querySelectorAll('.member-item').forEach(el => el.classList.remove('selected'));
+  const sideEl = document.querySelector(`[onclick="selectMember(${id})"]`);
+  // Update book page highlight
+  document.querySelectorAll('.gen-page').forEach(p => p.classList.remove('selected'));
+  const page = document.getElementById('page-'+id);
+  if (page) page.classList.add('selected');
+
+  showDetail(m);
+  renderSidebar(filterGenNum===0?allMembers:allMembers.filter(x=>x.generation===filterGenNum));
+}
+
+function showDetail(m) {
+  const panel = document.getElementById('detailPanel');
+  panel.classList.remove('hidden');
+
+  const parent = allMembers.find(x=>x.id===m.parentId);
+  const children = allMembers.filter(x=>x.parentId===m.id);
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-gen">${toChineseGen(m.generation)} 世</div>
+      ${m.title ? `<div class="detail-title-label">${m.title}</div>` : ''}
+      <div class="detail-name">${m.name}</div>
+      ${m.courtesy ? `<div style="font-size:0.8rem;color:var(--line)">字 ${m.courtesy}</div>` : ''}
+    </div>
+
+    ${m.relationDesc ? `<div class="detail-note">${m.relationDesc}</div>` : ''}
+
+    <div class="detail-section">
+      <div class="detail-section-title">生 卒 資 料</div>
+      ${m.birthDate ? `<div class="detail-row"><span class="detail-label">生年</span><span class="detail-value">${m.birthDate}</span></div>` : ''}
+      ${m.deathDate ? `<div class="detail-row"><span class="detail-label">卒年</span><span class="detail-value">${m.deathDate}</span></div>` : ''}
+      ${m.birthDeathNote ? `<div class="detail-row"><span class="detail-label">備注</span><span class="detail-value">${m.birthDeathNote}</span></div>` : ''}
+    </div>
+
+    ${(m.spouseMaidenName || m.spouseName) ? `
+    <div class="detail-section">
+      <div class="detail-section-title">配 偶 資 料</div>
+      ${m.spouseMaidenName ? `<div class="detail-row"><span class="detail-label">妣</span><span class="detail-value">${m.spouseMaidenName}</span></div>` : ''}
+      ${m.spouseName ? `<div class="detail-row"><span class="detail-label">配偶</span><span class="detail-value">${m.spouseName}</span></div>` : ''}
+      ${m.spouseNote ? `<div class="detail-row"><span class="detail-label">備注</span><span class="detail-value">${m.spouseNote}</span></div>` : ''}
+      ${m.childrenCount ? `<div class="detail-row"><span class="detail-label">生子</span><span class="detail-value">${m.childrenCount} 人</span></div>` : ''}
+    </div>` : ''}
+
+    <div class="detail-section">
+      <div class="detail-section-title">宗 族 關 係</div>
+      ${parent ? `<div class="detail-row"><span class="detail-label">父親</span><span class="detail-value" style="cursor:pointer;color:var(--red)" onclick="selectMember(${parent.id})">${parent.name} →</span></div>` : ''}
+      ${m.filialSons ? `<div class="detail-row"><span class="detail-label">孝男</span><span class="detail-value">${m.filialSons}</span></div>` : ''}
+      ${children.length ? `<div class="detail-row"><span class="detail-label">子女</span><span class="detail-value">${children.map(c=>`<span style="cursor:pointer;color:var(--red)" onclick="selectMember(${c.id})">${c.name}</span>`).join('、')}</span></div>` : ''}
+      ${m.worshippedBy ? `<div class="detail-row"><span class="detail-label">奉祀</span><span class="detail-value">${m.worshippedBy}</span></div>` : ''}
+    </div>
+
+    ${m.notes ? `<div class="detail-note">${m.notes}</div>` : ''}
+
+    <div class="detail-actions">
+      <button class="btn btn-primary" onclick="showEditModal(${m.id})">✎ 編輯</button>
+      <button class="btn btn-secondary" onclick="showAddChildModal(${m.id})">＋子</button>
+      <button class="btn btn-danger" onclick="deleteMember(${m.id})">✕</button>
+    </div>
+  `;
+}
+
+// ===== MODAL =====
+function showAddModal() {
+  document.getElementById('modalTitle').textContent = '新增族員';
+  document.getElementById('formId').value = '';
+  clearForm();
+  populateParentSelect();
+  document.getElementById('formModal').classList.add('show');
+}
+
+function showAddChildModal(parentId) {
+  showAddModal();
+  const parent = allMembers.find(m=>m.id===parentId);
+  if (parent) {
+    document.getElementById('fParentId').value = parentId;
+    document.getElementById('fGeneration').value = parent.generation + 1;
+    document.getElementById('modalTitle').textContent = `新增 ${parent.name} 之子`;
+  }
+}
+
+async function showEditModal(id) {
+  const m = allMembers.find(x=>x.id===id);
+  if (!m) return;
+  document.getElementById('modalTitle').textContent = `編輯：${m.name}`;
+  document.getElementById('formId').value = m.id;
+  populateParentSelect(m.id);
+  document.getElementById('fName').value = m.name||'';
+  document.getElementById('fCourtesy').value = m.courtesy||'';
+  document.getElementById('fGender').value = m.gender||'男';
+  document.getElementById('fGeneration').value = m.generation||'';
+  document.getElementById('fTitle').value = m.title||'';
+  document.getElementById('fParentId').value = m.parentId||'';
+  document.getElementById('fBirthDate').value = m.birthDate||'';
+  document.getElementById('fDeathDate').value = m.deathDate||'';
+  document.getElementById('fBirthDeathNote').value = m.birthDeathNote||'';
+  document.getElementById('fRelationDesc').value = m.relationDesc||'';
+  document.getElementById('fSpouseMaiden').value = m.spouseMaidenName||'';
+  document.getElementById('fSpouseName').value = m.spouseName||'';
+  document.getElementById('fSpouseNote').value = m.spouseNote||'';
+  document.getElementById('fFilialSons').value = m.filialSons||'';
+  document.getElementById('fChildrenCount').value = m.childrenCount||'';
+  document.getElementById('fWorshippedBy').value = m.worshippedBy||'';
+  document.getElementById('fNotes').value = m.notes||'';
+  document.getElementById('formModal').classList.add('show');
+}
+
+function populateParentSelect(excludeId=null) {
+  const sel = document.getElementById('fParentId');
+  sel.innerHTML = '<option value="">（無，為始祖）</option>' +
+    allMembers
+      .filter(m=>m.id!==excludeId)
+      .sort((a,b)=>a.generation-b.generation||a.id-b.id)
+      .map(m=>`<option value="${m.id}">${toChineseGen(m.generation)}世 ${m.name}</option>`)
+      .join('');
+}
+
+function clearForm() {
+  ['fName','fCourtesy','fTitle','fBirthDate','fDeathDate','fBirthDeathNote','fRelationDesc',
+   'fSpouseMaiden','fSpouseName','fSpouseNote','fFilialSons','fWorshippedBy','fNotes'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('fGender').value='男';
+  document.getElementById('fGeneration').value='';
+  document.getElementById('fChildrenCount').value='';
+  document.getElementById('fParentId').value='';
+}
+
+function closeModal() { document.getElementById('formModal').classList.remove('show'); }
+
+async function saveMember() {
+  const name = document.getElementById('fName').value.trim();
+  const gen = parseInt(document.getElementById('fGeneration').value);
+  if (!name) { showToast('請輸入名諱'); return; }
+  if (!gen) { showToast('請輸入世代'); return; }
+
+  const data = {
+    name, generation: gen,
+    courtesy: document.getElementById('fCourtesy').value||null,
+    gender: document.getElementById('fGender').value,
+    title: document.getElementById('fTitle').value||null,
+    parentId: document.getElementById('fParentId').value||null,
+    birthDate: document.getElementById('fBirthDate').value||null,
+    deathDate: document.getElementById('fDeathDate').value||null,
+    birthDeathNote: document.getElementById('fBirthDeathNote').value||null,
+    relationDesc: document.getElementById('fRelationDesc').value||null,
+    spouseMaidenName: document.getElementById('fSpouseMaiden').value||null,
+    spouseName: document.getElementById('fSpouseName').value||null,
+    spouseNote: document.getElementById('fSpouseNote').value||null,
+    filialSons: document.getElementById('fFilialSons').value||null,
+    childrenCount: parseInt(document.getElementById('fChildrenCount').value)||null,
+    worshippedBy: document.getElementById('fWorshippedBy').value||null,
+    notes: document.getElementById('fNotes').value||null,
+  };
+
+  const id = document.getElementById('formId').value;
+  try {
+    if (id) await api('/'+id, 'PUT', data);
+    else await api('', 'POST', data);
+    showToast(id ? '更新成功！' : '新增成功！');
+    closeModal();
+    await loadMembers();
+    if (id) showDetail(allMembers.find(m=>m.id==id));
+  } catch(e) { showToast('儲存失敗: '+e.message); }
+}
+
+async function deleteMember(id) {
+  const m = allMembers.find(x=>x.id===id);
+  if (!confirm(`確定要刪除「${m?.name}」嗎？`)) return;
+  try {
+    await api('/'+id, 'DELETE');
+    showToast('已刪除');
+    selectedId = null;
+    document.getElementById('detailPanel').classList.add('hidden');
+    await loadMembers();
+  } catch(e) { showToast('刪除失敗'); }
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// Close modal on overlay click
+document.getElementById('formModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ===== INIT =====
+loadMembers();
+</script>
+</body>
+</html>
