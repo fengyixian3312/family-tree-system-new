@@ -67,19 +67,22 @@
     .gen-pages-container{display:flex;flex-wrap:wrap;gap:4px;padding:8px;align-items:flex-start}
 
     /* 族譜頁：左右雙欄，右=本人，左=妣 */
-    .gen-page{display:flex;flex-direction:row;background:var(--paper);border:1px solid var(--line);border-right:3px solid var(--ink);min-height:580px;box-shadow:3px 0 8px var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s;margin-right:2px;writing-mode:vertical-rl;text-orientation:upright;font-family:'Noto Serif TC',serif;position:relative}
+    .gen-page{display:flex;flex-direction:row;background:var(--paper);border:1px solid var(--line);border-right:3px solid var(--ink);min-height:580px;height:auto;box-shadow:3px 0 8px var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s;margin-right:2px;writing-mode:vertical-rl;text-orientation:upright;font-family:'Noto Serif TC',serif;position:relative}
     .gen-page:hover{transform:translateY(-3px);box-shadow:3px 6px 16px var(--shadow);z-index:10}
     .gen-page.selected{background:#fdf5e6;border-right-color:var(--red);box-shadow:3px 0 16px rgba(139,26,26,.25)}
 
     /* 右欄：本人（主欄） */
-    .page-main-col{width:170px;min-height:580px;padding:22px 12px;display:flex;flex-direction:column;border-left:1px dashed var(--line-light)}
+   .page-main-col{width:170px;min-height:580px;padding:22px 12px;display:flex;flex-direction:column;border-left:1px dashed var(--line-light);word-break:break-all;overflow-wrap:break-word}
     /* 左欄：妣（副欄） */
-    .page-bi-col{width:100px;min-height:580px;padding:22px 10px;display:flex;flex-direction:column;background:rgba(139,115,85,.04)}
+    .page-bi-col{width:110px;min-width:110px;min-height:580px;padding:22px 10px;display:flex;flex-direction:column;background:rgba(139,115,85,.04);word-break:break-all;overflow-wrap:break-word}
     .gen-page.no-bi .page-bi-col{display:none}
     .gen-page.no-bi .page-main-col{border-left:none}
 
-    /* 主欄文字 */
-    .page-title{font-size:.9rem;color:var(--line);letter-spacing:.12em;margin-bottom:8px}
+    /* 神主牌位专用 - 缩小字体防溢出 */
+    .page-spirit{font-size:.72rem;color:var(--red);line-height:1.6;letter-spacing:.04em;margin-top:6px;word-break:break-all}
+    .page-burial{font-size:.7rem;color:var(--line);line-height:1.6;letter-spacing:.04em;word-break:break-all}
+    .bi-spirit{font-size:.7rem;color:var(--red);line-height:1.6;letter-spacing:.03em;word-break:break-all;margin-top:4px}
+    .bi-burial{font-size:.68rem;color:var(--line);line-height:1.6;letter-spacing:.03em;word-break:break-all}
     .page-name{font-family:'Ma Shan Zheng',serif;font-size:2.2rem;font-weight:700;letter-spacing:.15em;color:var(--ink);margin-bottom:16px;line-height:1.2}
     .page-relation{font-size:1rem;color:var(--ink-light);line-height:2;letter-spacing:.06em;margin-bottom:8px}
     .page-life{font-size:.95rem;color:var(--line);line-height:2;letter-spacing:.05em}
@@ -258,20 +261,6 @@
       <div class="form-group"><label class="form-label" id="lbParent">父親</label><select class="form-select" id="fParentId"><option value="">（無，為始祖）</option></select></div>
       <div class="form-group"><label class="form-label" id="lbBirth">生年</label><input type="text" class="form-input" id="fBirthDate" placeholder="如：清道光年間"></div>
       <div class="form-group"><label class="form-label" id="lbDeath">卒年</label><input type="text" class="form-input" id="fDeathDate" placeholder="如：清咸豐年間"></div>
-      <div class="form-group full"><label class="form-label" id="lbBdNote">生卒備注</label><input type="text" class="form-input" id="fBirthDeathNote" placeholder="如：生卒俱失考"></div>
-      <div class="form-group full"><label class="form-label" id="lbRelation">關係描述</label><input type="text" class="form-input" id="fRelationDesc" placeholder="如：有禄公之五子也"></div>
-      <div class="form-group"><label class="form-label" id="lbSpouseMaiden">妣（稱謂）</label><input type="text" class="form-input" id="fSpouseMaiden" placeholder="如：妣、繼妣"></div>
-      <div class="form-group"><label class="form-label" id="lbSpouseName">配偶姓名</label><input type="text" class="form-input" id="fSpouseName" placeholder="如：陳氏、失記"></div>
-      <div class="form-group"><label class="form-label" id="lbSpouseNote">配偶備注</label><input type="text" class="form-input" id="fSpouseNote" placeholder="如：失記"></div>
-      <div class="form-group"><label class="form-label">妣 生年</label><input type="text" class="form-input" id="fBiBirth" placeholder="如：同治元年生"></div>
-      <div class="form-group"><label class="form-label">妣 卒年</label><input type="text" class="form-input" id="fBiDeath" placeholder="如：民国三十二年终"></div>
-      <div class="form-group full"><label class="form-label">妣 生卒備注</label><input type="text" class="form-input" id="fBiBdNote" placeholder="如：生卒俱失考"></div>
-      <div class="form-group full"><label class="form-label">妣 神主牌位</label><input type="text" class="form-input" id="fBiSpiritTablet" placeholder="如：已故稀寿显妣杨氏之神主"></div>
-      <div class="form-group full"><label class="form-label">妣 埋葬地址</label><input type="text" class="form-input" id="fBiBurialAddress" placeholder="如：葬於俄卜泗老塋金山"></div>
-      <div class="form-group"><label class="form-label">妣 埋葬向法</label><input type="text" class="form-input" id="fBiBurialDirection" placeholder="如：丙兼子午向"></div>
-      <div class="form-group"><label class="form-label" id="lbFilial">孝男</label><input type="text" class="form-input" id="fFilialSons" placeholder="兒子名"></div>
-      <div class="form-group"><label class="form-label" id="lbKids">生子人數</label><input type="number" class="form-input" id="fChildrenCount" placeholder="0" min="0"></div>
-      <div class="form-group full"><label class="form-label" id="lbWorship">奉祀者</label><input type="text" class="form-input" id="fWorshippedBy" placeholder="如：孝男鐘奉祀"></div>
       <div class="form-group full">
         <label class="form-label">神主牌位</label>
         <input type="text" class="form-input" id="fSpiritTablet"
@@ -287,6 +276,20 @@
         <input type="text" class="form-input" id="fBurialDirection"
                placeholder="如：丙兼丑未向">
       </div>
+      <div class="form-group full"><label class="form-label" id="lbBdNote">生卒備注</label><input type="text" class="form-input" id="fBirthDeathNote" placeholder="如：生卒俱失考"></div>
+      <div class="form-group full"><label class="form-label" id="lbRelation">關係描述</label><input type="text" class="form-input" id="fRelationDesc" placeholder="如：有禄公之五子也"></div>
+      <div class="form-group"><label class="form-label" id="lbSpouseMaiden">妣（稱謂）</label><input type="text" class="form-input" id="fSpouseMaiden" placeholder="如：妣、繼妣"></div>
+      <div class="form-group"><label class="form-label" id="lbSpouseName">配偶姓名</label><input type="text" class="form-input" id="fSpouseName" placeholder="如：陳氏、失記"></div>
+      <div class="form-group"><label class="form-label" id="lbSpouseNote">配偶備注</label><input type="text" class="form-input" id="fSpouseNote" placeholder="如：失記"></div>
+      <div class="form-group"><label class="form-label">妣 生年</label><input type="text" class="form-input" id="fBiBirth" placeholder="如：同治元年生"></div>
+      <div class="form-group"><label class="form-label">妣 卒年</label><input type="text" class="form-input" id="fBiDeath" placeholder="如：民国三十二年终"></div>
+      <div class="form-group full"><label class="form-label">妣 生卒備注</label><input type="text" class="form-input" id="fBiBdNote" placeholder="如：生卒俱失考"></div>
+      <div class="form-group full"><label class="form-label">妣 神主牌位</label><input type="text" class="form-input" id="fBiSpiritTablet" placeholder="如：已故稀寿显妣杨氏之神主"></div>
+      <div class="form-group full"><label class="form-label">妣 埋葬地址</label><input type="text" class="form-input" id="fBiBurialAddress" placeholder="如：葬於俄卜泗老塋金山"></div>
+      <div class="form-group"><label class="form-label">妣 埋葬向法</label><input type="text" class="form-input" id="fBiBurialDirection" placeholder="如：丙兼子午向"></div>
+      <div class="form-group"><label class="form-label" id="lbFilial">孝男</label><input type="text" class="form-input" id="fFilialSons" placeholder="兒子名"></div>
+      <div class="form-group"><label class="form-label" id="lbKids">生子人數</label><input type="number" class="form-input" id="fChildrenCount" placeholder="0" min="0"></div>
+      <div class="form-group full"><label class="form-label" id="lbWorship">奉祀者</label><input type="text" class="form-input" id="fWorshippedBy" placeholder="如：孝男鐘奉祀"></div>
       <div class="form-group full"><label class="form-label" id="lbNotes">備注</label><textarea class="form-textarea" id="fNotes" placeholder="其他備注事項..."></textarea></div>
     </div>
     <div class="modal-actions">
@@ -452,8 +455,9 @@
   function renderBookPage(m){
   const sel=selectedId===m.id?'selected':'';
   const gc=`gen-${Math.min(m.generation,6)}`;
-  // 只要录入了妣字段就显示妣栏（包括"失記"这种值）
-  const hasBi = !!(m.spouseMaidenName || m.spouseName || m.spouseNote || m.childrenCount);
+  const hasBi = !!(m.spouseMaidenName || m.spouseName || m.spouseNote || m.childrenCount
+    || m.biBirthDate || m.biDeathDate || m.biBirthDeathNote
+    || m.biSpiritTablet || m.biBurialAddress || m.biBurialDirection);
   const noBi=hasBi?'':'no-bi';
 
   // 右欄：本人
@@ -461,30 +465,41 @@
   if(m.title)main+=`<div class="page-title">${m.title}</div>`;
   main+=`<div class="page-name">${m.name}</div>`;
   if(m.relationDesc)main+=`<div class="page-relation">${m.relationDesc}</div>`;
-  if(m.birthDeathNote){main+=`<div class="page-life">${m.birthDeathNote}</div>`;}
-  else{
-    if(m.birthDate)main+=`<div class="page-life">生：${m.birthDate}</div>`;
-    if(m.deathDate)main+=`<div class="page-life">卒：${m.deathDate}</div>`;
+  if(m.birthDeathNote){
+    main+=`<div class="page-life">${m.birthDeathNote}</div>`;
+  } else {
+    if(m.birthDate)main+=`<div class="page-life">${m.birthDate}生</div>`;
+    if(m.deathDate)main+=`<div class="page-life">${m.deathDate}終</div>`;
   }
+  // 神主牌位（红色小字，紧跟生卒后）
+  if(m.spiritTablet)main+=`<div class="page-spirit">${m.spiritTablet}</div>`;
+  // 埋葬信息
+  if(m.burialAddress)main+=`<div class="page-burial">葬${m.burialAddress}</div>`;
+  if(m.burialDirection)main+=`<div class="page-burial">${m.burialDirection}</div>`;
+
   main+=`<div class="page-filial">`;
   if(m.filialSons)main+=`<div class="page-filial-text">孝男${m.filialSons}</div>`;
   if(m.worshippedBy)main+=`<div class="page-worship">${m.worshippedBy}</div>`;
   main+=`</div></div>`;
 
-  // 左欄：妣（仿原族谱图片格式）
+  // 左欄：妣（含生卒、神主、埋葬）
   let bi=`<div class="page-bi-col">`;
   if(hasBi){
-    // 「妣」大字单独一行，对应图片左侧
+    // 妣字大号显示
     bi+=`<div class="bi-label">${m.spouseMaidenName||'妣'}</div>`;
-    // 配偶名或「失記」
+    // 配偶名
     if(m.spouseName)bi+=`<div class="bi-name">${m.spouseName}</div>`;
     if(m.spouseNote)bi+=`<div class="bi-note">${m.spouseNote}</div>`;
+    // 妣生卒
     if(m.biBirthDate)bi+=`<div class="bi-note">${m.biBirthDate}生</div>`;
     if(m.biDeathDate)bi+=`<div class="bi-note">${m.biDeathDate}終</div>`;
     if(m.biBirthDeathNote)bi+=`<div class="bi-note">${m.biBirthDeathNote}</div>`;
-    if(m.biSpiritTablet)bi+=`<div class="bi-note" style="color:var(--red);font-size:.78rem">${m.biSpiritTablet}</div>`;
-    if(m.biBurialAddress)bi+=`<div class="bi-note" style="font-size:.78rem">葬：${m.biBurialAddress}</div>`;
-    if(m.biBurialDirection)bi+=`<div class="bi-note" style="font-size:.78rem">向：${m.biBurialDirection}</div>`;
+    // 妣神主（红色）
+    if(m.biSpiritTablet)bi+=`<div class="bi-spirit">${m.biSpiritTablet}</div>`;
+    // 妣埋葬
+    if(m.biBurialAddress)bi+=`<div class="bi-burial">葬${m.biBurialAddress}</div>`;
+    if(m.biBurialDirection)bi+=`<div class="bi-burial">${m.biBurialDirection}</div>`;
+    // 生子人数放最下
     if(m.childrenCount)bi+=`<div class="bi-kids">生子${m.childrenCount}人</div>`;
   }
   bi+=`</div>`;
