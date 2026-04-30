@@ -56,6 +56,60 @@ public class FamilyMember {
     @Column(name = "title")
     private String title; // 称谓，如 祖 謚
 
+    @Column(name = "spirit_tablet")
+    private String spiritTablet; // 神主牌位
+
+    @Column(name = "burial_address")
+    private String burialAddress; // 埋葬地址
+
+    @Column(name = "burial_direction")
+    private String burialDirection; // 埋葬向法
+
+    // 妣的生卒
+    @Column(name = "bi_birth_date")
+    private String biBirthDate;
+
+    @Column(name = "bi_death_date")
+    private String biDeathDate;
+
+    @Column(name = "bi_birth_death_note")
+    private String biBirthDeathNote;
+
+    // 妣的神主牌位
+    @Column(name = "bi_spirit_tablet")
+    private String biSpiritTablet;
+
+    // 妣的埋葬地址
+    @Column(name = "bi_burial_address")
+    private String biBurialAddress;
+
+    // 妣的埋葬向法
+    @Column(name = "bi_burial_direction")
+    private String biBurialDirection;
+
+    // getter/setter
+    public String getBiBirthDate(){return biBirthDate;}
+    public void setBiBirthDate(String v){this.biBirthDate=v;}
+    public String getBiDeathDate(){return biDeathDate;}
+    public void setBiDeathDate(String v){this.biDeathDate=v;}
+    public String getBiBirthDeathNote(){return biBirthDeathNote;}
+    public void setBiBirthDeathNote(String v){this.biBirthDeathNote=v;}
+    public String getBiSpiritTablet(){return biSpiritTablet;}
+    public void setBiSpiritTablet(String v){this.biSpiritTablet=v;}
+    public String getBiBurialAddress(){return biBurialAddress;}
+    public void setBiBurialAddress(String v){this.biBurialAddress=v;}
+    public String getBiBurialDirection(){return biBurialDirection;}
+    public void setBiBurialDirection(String v){this.biBurialDirection=v;}
+
+    public String getSpiritTablet() { return spiritTablet; }
+    public void setSpiritTablet(String spiritTablet) { this.spiritTablet = spiritTablet; }
+
+    public String getBurialAddress() { return burialAddress; }
+    public void setBurialAddress(String burialAddress) { this.burialAddress = burialAddress; }
+
+    public String getBurialDirection() { return burialDirection; }
+    public void setBurialDirection(String burialDirection) { this.burialDirection = burialDirection; }
+
     // Constructors
     public FamilyMember() {}
 
