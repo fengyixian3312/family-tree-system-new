@@ -6,489 +6,164 @@
   <title>家譜管理系統</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700;900&family=Ma+Shan+Zheng&display=swap');
-
     :root {
-      --ink: #1a1008;
-      --ink-light: #3d2b1a;
-      --paper: #f5f0e8;
-      --paper-dark: #ede5d0;
-      --paper-darker: #d9cdb5;
-      --red: #8b1a1a;
-      --red-light: #c0392b;
-      --gold: #b8860b;
-      --gold-light: #d4a017;
-      --line: #8b7355;
-      --line-light: #c4a882;
-      --shadow: rgba(26, 16, 8, 0.15);
+      --ink:#1a1008; --ink-light:#3d2b1a; --paper:#f5f0e8; --paper-dark:#ede5d0;
+      --paper-darker:#d9cdb5; --red:#8b1a1a; --gold:#b8860b; --gold-light:#d4a017;
+      --line:#8b7355; --line-light:#c4a882; --shadow:rgba(26,16,8,.15);
     }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Noto Serif TC',serif;background:var(--paper);color:var(--ink);min-height:100vh;
+      background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,var(--line-light) 39px,var(--line-light) 40px),
+        repeating-linear-gradient(90deg,transparent,transparent 39px,var(--line-light) 39px,var(--line-light) 40px);
+      background-size:40px 40px}
+    .header{background:var(--ink);color:var(--paper);position:relative;border-bottom:4px solid var(--gold);overflow:hidden}
+    .header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(184,134,11,.05) 10px,rgba(184,134,11,.05) 20px)}
+    .header-inner{position:relative;z-index:1;padding:20px 40px;display:flex;align-items:center;justify-content:space-between}
+    .header-title{font-family:'Ma Shan Zheng',serif;font-size:2.8rem;letter-spacing:.3em;color:var(--gold-light);text-shadow:2px 2px 0 rgba(0,0,0,.5)}
+    .header-sub{font-size:.85rem;color:var(--line-light);letter-spacing:.2em;margin-top:4px}
+    .header-dec{font-size:2rem;color:var(--gold);opacity:.6}
+    .nav{background:var(--ink-light);display:flex;gap:2px;padding:0 20px;border-bottom:2px solid var(--gold);align-items:center;flex-wrap:wrap}
+    .nav-btn{background:none;border:none;color:var(--paper-dark);padding:12px 24px;font-family:'Noto Serif TC',serif;font-size:.95rem;letter-spacing:.1em;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
+    .nav-btn:hover,.nav-btn.active{color:var(--gold-light);border-bottom-color:var(--gold-light);background:rgba(184,134,11,.08)}
+    .nav-btn.admin-only{display:none}
+    .nav-user-area{display:flex;align-items:center;gap:8px;padding:0 12px;margin-left:auto}
+    .nav-user-badge{font-size:.82rem;color:var(--line-light);padding:4px 10px;border:1px solid rgba(196,168,130,.3);border-radius:2px}
+    .nav-user-badge.admin{color:var(--gold-light);border-color:rgba(212,160,23,.4)}
+    .nav-logout-btn{background:none;border:1px solid rgba(192,57,43,.4);color:#e57373;padding:5px 14px;font-family:'Noto Serif TC',serif;font-size:.8rem;cursor:pointer;border-radius:2px;transition:all .2s}
+    .nav-logout-btn:hover{background:rgba(192,57,43,.15)}
+    .lang-btn{background:none;border:1px solid rgba(184,134,11,.4);color:var(--gold-light);padding:5px 14px;font-family:'Noto Serif TC',serif;font-size:.8rem;cursor:pointer;border-radius:2px;transition:all .2s}
+    .lang-btn:hover{background:rgba(184,134,11,.1)}
+    .stats-bar{background:var(--paper-dark);border-bottom:1px solid var(--line);padding:8px 30px;display:flex;gap:30px;font-size:.88rem;color:var(--ink-light)}
+    .stat-item{display:flex;gap:6px;align-items:center}
+    .stat-num{font-weight:700;color:var(--red);font-size:1.05rem}
+    .main{display:flex;min-height:calc(100vh - 145px)}
+    .sidebar{width:280px;background:var(--paper-dark);border-right:2px solid var(--line);padding:20px;flex-shrink:0;overflow-y:auto;max-height:calc(100vh - 145px);position:sticky;top:0}
+    .sidebar-title{font-size:1rem;font-weight:700;color:var(--red);letter-spacing:.15em;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:16px}
+    .search-box{display:flex;gap:6px;margin-bottom:16px}
+    .search-box input{flex:1;border:1px solid var(--line);background:var(--paper);padding:8px 12px;font-family:'Noto Serif TC',serif;font-size:.9rem;color:var(--ink);border-radius:2px}
+    .search-box input:focus{outline:none;border-color:var(--gold)}
+    .btn-sm{background:var(--ink);color:var(--paper);border:none;padding:8px 14px;cursor:pointer;font-family:'Noto Serif TC',serif;font-size:.85rem;border-radius:2px;transition:background .2s}
+    .btn-sm:hover{background:var(--red)}
+    .btn-sm.gold{background:var(--gold)}
+    .btn-sm.gold:hover{background:var(--gold-light)}
+    .gen-filter{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px}
+    .gen-tag{background:var(--paper);border:1px solid var(--line);color:var(--ink);padding:4px 10px;font-size:.8rem;cursor:pointer;border-radius:2px;transition:all .2s}
+    .gen-tag:hover,.gen-tag.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .member-list{list-style:none}
+    .member-item{padding:8px 12px;border-bottom:1px solid var(--paper-darker);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:8px;font-size:.92rem}
+    .member-item:hover{background:var(--paper)}
+    .member-item.selected{background:var(--ink);color:var(--paper)}
+    .gen-badge{font-size:.72rem;background:var(--line);color:var(--paper);padding:1px 6px;border-radius:10px;flex-shrink:0}
+    .member-item.selected .gen-badge{background:var(--gold)}
+    .content{flex:1;overflow:auto}
+    .view-panel{display:none}
+    .view-panel.active{display:block}
+    .scroll-hint{text-align:center;color:var(--line);font-size:.78rem;padding:8px;letter-spacing:.1em}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ===== 譜牒書頁 ===== */
+    .genealogy-book{padding:30px;display:flex;flex-wrap:nowrap;gap:0;align-items:flex-start;overflow-x:auto;min-height:600px}
+    .gen-group-wrap{display:flex;align-items:stretch;margin-right:16px;flex-shrink:0}
+    .gen-group-header{background:var(--ink);color:var(--gold-light);writing-mode:vertical-rl;font-family:'Ma Shan Zheng',serif;font-size:1.1rem;letter-spacing:.3em;padding:16px 8px;text-align:center;border-radius:2px 0 0 2px;flex-shrink:0}
+    .gen-pages-container{display:flex;flex-wrap:wrap;gap:4px;padding:8px;align-items:flex-start}
 
-    body {
-      font-family: 'Noto Serif TC', serif;
-      background: var(--paper);
-      color: var(--ink);
-      min-height: 100vh;
-      background-image:
-        repeating-linear-gradient(0deg, transparent, transparent 39px, var(--line-light) 39px, var(--line-light) 40px),
-        repeating-linear-gradient(90deg, transparent, transparent 39px, var(--line-light) 39px, var(--line-light) 40px);
-      background-size: 40px 40px;
-    }
+    /* 族譜頁：左右雙欄，右=本人，左=妣 */
+    .gen-page{display:flex;flex-direction:row;background:var(--paper);border:1px solid var(--line);border-right:3px solid var(--ink);min-height:580px;box-shadow:3px 0 8px var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s;margin-right:2px;writing-mode:vertical-rl;text-orientation:upright;font-family:'Noto Serif TC',serif;position:relative}
+    .gen-page:hover{transform:translateY(-3px);box-shadow:3px 6px 16px var(--shadow);z-index:10}
+    .gen-page.selected{background:#fdf5e6;border-right-color:var(--red);box-shadow:3px 0 16px rgba(139,26,26,.25)}
 
-    /* Header */
-    .header {
-      background: var(--ink);
-      color: var(--paper);
-      padding: 0;
-      text-align: center;
-      position: relative;
-      border-bottom: 4px solid var(--gold);
-      overflow: hidden;
-    }
-    .header::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(184,134,11,0.05) 10px, rgba(184,134,11,0.05) 20px);
-    }
-    .header-inner {
-      position: relative;
-      z-index: 1;
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .header-title {
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 2.8rem;
-      letter-spacing: 0.3em;
-      color: var(--gold-light);
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-    }
-    .header-sub {
-      font-size: 0.85rem;
-      color: var(--line-light);
-      letter-spacing: 0.2em;
-      margin-top: 4px;
-    }
-    .header-dec {
-      font-size: 2rem;
-      color: var(--gold);
-      opacity: 0.6;
-    }
+    /* 右欄：本人（主欄） */
+    .page-main-col{width:170px;min-height:580px;padding:22px 12px;display:flex;flex-direction:column;border-left:1px dashed var(--line-light)}
+    /* 左欄：妣（副欄） */
+    .page-bi-col{width:100px;min-height:580px;padding:22px 10px;display:flex;flex-direction:column;background:rgba(139,115,85,.04)}
+    .gen-page.no-bi .page-bi-col{display:none}
+    .gen-page.no-bi .page-main-col{border-left:none}
 
-    /* Navigation */
-    .nav {
-      background: var(--ink-light);
-      display: flex;
-      gap: 2px;
-      padding: 0 20px;
-      border-bottom: 2px solid var(--gold);
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      color: var(--paper-dark);
-      padding: 12px 24px;
-      font-family: 'Noto Serif TC', serif;
-      font-size: 0.95rem;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-    }
-    .nav-btn:hover, .nav-btn.active {
-      color: var(--gold-light);
-      border-bottom-color: var(--gold-light);
-      background: rgba(184,134,11,0.08);
-    }
-    .nav-btn.admin-only { display: none; }
+    /* 主欄文字 */
+    .page-title{font-size:.9rem;color:var(--line);letter-spacing:.12em;margin-bottom:8px}
+    .page-name{font-family:'Ma Shan Zheng',serif;font-size:2.2rem;font-weight:700;letter-spacing:.15em;color:var(--ink);margin-bottom:16px;line-height:1.2}
+    .page-relation{font-size:1rem;color:var(--ink-light);line-height:2;letter-spacing:.06em;margin-bottom:8px}
+    .page-life{font-size:.95rem;color:var(--line);line-height:2;letter-spacing:.05em}
+    .page-filial{margin-top:auto;padding-top:12px}
+    .page-filial-text{font-size:.92rem;color:var(--ink-light);line-height:2}
+    .page-worship{font-size:.88rem;color:var(--red);margin-top:8px;line-height:1.9}
 
-    /* 用户信息区 */
-    .nav-user-area {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 12px;
-      margin-left: auto;
-    }
-    .nav-user-badge {
-      font-size: 0.82rem;
-      color: var(--line-light);
-      letter-spacing: 0.05em;
-      padding: 4px 10px;
-      border: 1px solid rgba(196,168,130,0.3);
-      border-radius: 2px;
-    }
-    .nav-user-badge.admin { color: var(--gold-light); border-color: rgba(212,160,23,0.4); }
-    .nav-logout-btn {
-      background: none;
-      border: 1px solid rgba(192,57,43,0.4);
-      color: #e57373;
-      padding: 5px 14px;
-      font-family: 'Noto Serif TC', serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: all 0.2s;
-      letter-spacing: 0.05em;
-    }
-    .nav-logout-btn:hover { background: rgba(192,57,43,0.15); color: #ef9a9a; }
+    /* 妣欄文字 */
+    .bi-label{font-family:'Ma Shan Zheng',serif;font-size:1.6rem;color:var(--red);letter-spacing:.12em;margin-bottom:14px;text-align:center;border-bottom:1px solid var(--line-light);padding-bottom:6px}
+    .bi-name{font-family:'Ma Shan Zheng',serif;font-size:1.3rem;color:var(--ink);letter-spacing:.1em;margin-bottom:10px;line-height:1.4}
+    .bi-note{font-size:.9rem;color:var(--line);line-height:2;letter-spacing:.05em}
+    .bi-kids{font-size:.88rem;color:var(--ink-light);margin-top:10px;line-height:2}
 
-    /* 語言切換按鈕 */
-    .lang-btn {
-      background: none;
-      border: 1px solid rgba(184,134,11,0.4);
-      color: var(--gold-light);
-      padding: 5px 14px;
-      font-family: 'Noto Serif TC', serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: all 0.2s;
-      letter-spacing: 0.05em;
-    }
-    .lang-btn:hover { background: rgba(184,134,11,0.1); }
+    /* 世代顏色 */
+    .gen-1 .page-main-col{border-top:4px solid #8b1a1a}
+    .gen-2 .page-main-col{border-top:4px solid #b8860b}
+    .gen-3 .page-main-col{border-top:4px solid #2e6b4f}
+    .gen-4 .page-main-col{border-top:4px solid #1a3d6b}
+    .gen-5 .page-main-col{border-top:4px solid #5c3d7a}
+    .gen-6 .page-main-col{border-top:4px solid #6b3a1a}
 
-    /* Main Layout */
-    .main { display: flex; min-height: calc(100vh - 140px); }
+    /* ===== 世系圖 ===== */
+    .tree-view-container{padding:30px;overflow-x:auto}
+    .tree-title{font-family:'Ma Shan Zheng',serif;font-size:1.5rem;color:var(--red);letter-spacing:.2em;margin-bottom:20px;border-bottom:2px solid var(--line);padding-bottom:10px}
+    .tree-card{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--red);padding:10px 14px;min-width:100px;max-width:140px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:2px 2px 6px var(--shadow);margin:8px}
+    .tree-card:hover{border-top-color:var(--gold);box-shadow:2px 4px 12px var(--shadow)}
+    .tree-card.selected{background:var(--ink);color:var(--paper)}
+    .tc-gen{font-size:.78rem;color:var(--red);margin-bottom:2px}
+    .tree-card.selected .tc-gen{color:var(--gold-light)}
+    .tc-name{font-family:'Ma Shan Zheng',serif;font-size:1.4rem}
+    .tc-dates{font-size:.75rem;color:var(--line);margin-top:3px}
+    .tree-card.selected .tc-dates{color:var(--line-light)}
+    .tree-line-v{width:2px;height:20px;background:var(--line);margin:0 auto}
 
-    /* Sidebar */
-    .sidebar {
-      width: 280px;
-      background: var(--paper-dark);
-      border-right: 2px solid var(--line);
-      padding: 20px;
-      flex-shrink: 0;
-      overflow-y: auto;
-      max-height: calc(100vh - 140px);
-      position: sticky;
-      top: 0;
-    }
-    .sidebar-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--red);
-      letter-spacing: 0.15em;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 8px;
-      margin-bottom: 16px;
-    }
+    /* ===== 詳情面板 ===== */
+    .detail-panel{width:380px;background:var(--paper);border-left:2px solid var(--line);padding:24px;flex-shrink:0;overflow-y:auto;max-height:calc(100vh - 145px);position:sticky;top:0}
+    .detail-panel.hidden{display:none}
+    .detail-scroll{font-family:'Noto Serif TC',serif;writing-mode:horizontal-tb}
+    .detail-header{text-align:center;border-bottom:2px solid var(--line);padding-bottom:16px;margin-bottom:20px}
+    .detail-gen{font-size:.92rem;color:var(--red);letter-spacing:.2em;margin-bottom:4px}
+    .detail-title-label{font-size:.88rem;color:var(--line)}
+    .detail-name{font-family:'Ma Shan Zheng',serif;font-size:3.2rem;color:var(--ink);letter-spacing:.2em;line-height:1.1;margin:8px 0}
+    .detail-section{margin-bottom:16px}
+    .detail-section-title{font-size:.85rem;color:var(--red);letter-spacing:.2em;border-bottom:1px dashed var(--line-light);padding-bottom:4px;margin-bottom:10px}
+    .detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:1rem}
+    .detail-label{color:var(--line);flex-shrink:0;min-width:70px;font-size:.88rem}
+    .detail-value{color:var(--ink)}
+    .detail-note{background:var(--paper-dark);border-left:3px solid var(--gold);padding:10px 14px;font-size:.95rem;color:var(--ink-light);margin-bottom:12px;line-height:1.8}
+    .detail-actions{display:flex;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line-light)}
+    .btn{flex:1;padding:10px;border:none;font-family:'Noto Serif TC',serif;font-size:.9rem;letter-spacing:.1em;cursor:pointer;border-radius:2px;transition:all .2s}
+    .btn-primary{background:var(--ink);color:var(--paper)}
+    .btn-primary:hover{background:var(--red)}
+    .btn-danger{background:#c0392b;color:white}
+    .btn-danger:hover{background:#922b21}
+    .btn-secondary{background:var(--paper-dark);color:var(--ink);border:1px solid var(--line)}
+    .btn-secondary:hover{background:var(--paper-darker)}
 
-    /* Search */
-    .search-box {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-    .search-box input {
-      flex: 1;
-      border: 1px solid var(--line);
-      background: var(--paper);
-      padding: 8px 12px;
-      font-family: 'Noto Serif TC', serif;
-      font-size: 0.9rem;
-      color: var(--ink);
-      border-radius: 2px;
-    }
-    .search-box input:focus { outline: none; border-color: var(--gold); }
-    .btn-sm {
-      background: var(--ink);
-      color: var(--paper);
-      border: none;
-      padding: 8px 14px;
-      cursor: pointer;
-      font-family: 'Noto Serif TC', serif;
-      font-size: 0.85rem;
-      border-radius: 2px;
-      transition: background 0.2s;
-    }
-    .btn-sm:hover { background: var(--red); }
-    .btn-sm.gold { background: var(--gold); }
-    .btn-sm.gold:hover { background: var(--gold-light); }
-
-    /* Generation filter */
-    .gen-filter {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 16px;
-    }
-    .gen-tag {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      color: var(--ink);
-      padding: 4px 10px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: all 0.2s;
-    }
-    .gen-tag:hover, .gen-tag.active {
-      background: var(--ink);
-      color: var(--paper);
-      border-color: var(--ink);
-    }
-
-    /* Member list in sidebar */
-    .member-list { list-style: none; }
-    .member-item {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--paper-darker);
-      cursor: pointer;
-      transition: background 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-    }
-    .member-item:hover { background: var(--paper); }
-    .member-item.selected { background: var(--ink); color: var(--paper); }
-    .member-item .gen-badge {
-      font-size: 0.7rem;
-      background: var(--line);
-      color: var(--paper);
-      padding: 1px 6px;
-      border-radius: 10px;
-      flex-shrink: 0;
-    }
-    .member-item.selected .gen-badge { background: var(--gold); }
-
-    /* Content area */
-    .content { flex: 1; overflow: auto; }
-
-    /* View panels */
-    .view-panel { display: none; }
-    .view-panel.active { display: block; }
-
-    /* ========== GENEALOGY BOOK VIEW ========== */
-    .genealogy-book {
-      padding: 30px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0;
-      justify-content: flex-start;
-      align-items: flex-start;
-    }
-
-    .gen-page {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-right: 3px solid var(--ink);
-      width: 160px;
-      min-height: 500px;
-      padding: 20px 10px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      font-family: 'Noto Serif TC', serif;
-      box-shadow: 3px 0 8px var(--shadow);
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      margin-right: 2px;
-    }
-    .gen-page:hover {
-      transform: translateY(-3px);
-      box-shadow: 3px 6px 16px var(--shadow);
-      z-index: 10;
-    }
-    .gen-page.selected {
-      background: #fdf5e6;
-      border-right-color: var(--red);
-      box-shadow: 3px 0 16px rgba(139,26,26,0.25);
-    }
-    .gen-page .title-line { font-size: 0.75rem; color: var(--line); letter-spacing: 0.1em; margin-bottom: 8px; }
-    .gen-page .name-main { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.15em; color: var(--ink); margin-bottom: 12px; font-family: 'Ma Shan Zheng', serif; }
-    .gen-page .detail-text { font-size: 0.78rem; color: var(--ink-light); line-height: 1.8; letter-spacing: 0.05em; }
-    .gen-page .spouse-section { margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--line-light); }
-    .gen-page .spouse-label { font-size: 0.75rem; color: var(--line); }
-    .gen-page .filial-section { margin-top: auto; padding-top: 12px; }
-    .gen-page .worshipped { font-size: 0.7rem; color: var(--red); margin-top: 8px; }
-
-    .gen-group { display: flex; flex-direction: column; gap: 0; margin-right: 8px; }
-    .gen-group-header {
-      background: var(--ink);
-      color: var(--gold-light);
-      writing-mode: vertical-rl;
-      font-family: 'Ma Shan Zheng', serif;
-      font-size: 1rem;
-      letter-spacing: 0.3em;
-      padding: 16px 8px;
-      text-align: center;
-      min-height: 100px;
-      border-radius: 2px 0 0 2px;
-    }
-
-    /* ========== TREE VIEW ========== */
-    .tree-view-container { padding: 30px; overflow-x: auto; }
-    .tree-title { font-family: 'Ma Shan Zheng', serif; font-size: 1.5rem; color: var(--red); letter-spacing: 0.2em; margin-bottom: 20px; border-bottom: 2px solid var(--line); padding-bottom: 10px; }
-    .tree-card {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-top: 3px solid var(--red);
-      padding: 10px 14px;
-      min-width: 100px;
-      max-width: 130px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 2px 2px 6px var(--shadow);
-      margin: 8px;
-    }
-    .tree-card:hover { border-top-color: var(--gold); box-shadow: 2px 4px 12px var(--shadow); }
-    .tree-card.selected { background: var(--ink); color: var(--paper); }
-    .tree-card .tc-gen { font-size: 0.7rem; color: var(--red); margin-bottom: 2px; }
-    .tree-card.selected .tc-gen { color: var(--gold-light); }
-    .tree-card .tc-name { font-family: 'Ma Shan Zheng', serif; font-size: 1.2rem; }
-    .tree-card .tc-dates { font-size: 0.65rem; color: var(--line); margin-top: 3px; }
-    .tree-card.selected .tc-dates { color: var(--line-light); }
-    .tree-line-v { width: 2px; height: 20px; background: var(--line); margin: 0 auto; }
-
-    /* ========== DETAIL PANEL ========== */
-    .detail-panel {
-      width: 360px;
-      background: var(--paper);
-      border-left: 2px solid var(--line);
-      padding: 24px;
-      flex-shrink: 0;
-      overflow-y: auto;
-      max-height: calc(100vh - 140px);
-      position: sticky;
-      top: 0;
-    }
-    .detail-panel.hidden { display: none; }
-    .detail-scroll { font-family: 'Noto Serif TC', serif; writing-mode: horizontal-tb; }
-    .detail-header { text-align: center; border-bottom: 2px solid var(--line); padding-bottom: 16px; margin-bottom: 20px; }
-    .detail-gen { font-size: 0.85rem; color: var(--red); letter-spacing: 0.2em; margin-bottom: 4px; }
-    .detail-title-label { font-size: 0.8rem; color: var(--line); }
-    .detail-name { font-family: 'Ma Shan Zheng', serif; font-size: 2.8rem; color: var(--ink); letter-spacing: 0.2em; line-height: 1.1; margin: 8px 0; }
-    .detail-section { margin-bottom: 16px; }
-    .detail-section-title { font-size: 0.75rem; color: var(--red); letter-spacing: 0.2em; border-bottom: 1px dashed var(--line-light); padding-bottom: 4px; margin-bottom: 10px; }
-    .detail-row { display: flex; gap: 8px; margin-bottom: 8px; font-size: 0.88rem; }
-    .detail-label { color: var(--line); flex-shrink: 0; min-width: 70px; font-size: 0.8rem; }
-    .detail-value { color: var(--ink); }
-    .detail-note { background: var(--paper-dark); border-left: 3px solid var(--gold); padding: 10px 14px; font-size: 0.85rem; color: var(--ink-light); margin-bottom: 12px; line-height: 1.7; }
-    .detail-actions { display: flex; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line-light); }
-    .btn { flex: 1; padding: 10px; border: none; font-family: 'Noto Serif TC', serif; font-size: 0.9rem; letter-spacing: 0.1em; cursor: pointer; border-radius: 2px; transition: all 0.2s; }
-    .btn-primary { background: var(--ink); color: var(--paper); }
-    .btn-primary:hover { background: var(--red); }
-    .btn-danger { background: #c0392b; color: white; }
-    .btn-danger:hover { background: #922b21; }
-    .btn-secondary { background: var(--paper-dark); color: var(--ink); border: 1px solid var(--line); }
-    .btn-secondary:hover { background: var(--paper-darker); }
-
-    /* ========== MODAL ========== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(26,16,8,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-      background: var(--paper);
-      border: 2px solid var(--line);
-      border-top: 4px solid var(--red);
-      padding: 30px;
-      width: 580px;
-      max-height: 85vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
-    .modal-title { font-family: 'Ma Shan Zheng', serif; font-size: 1.6rem; color: var(--red); letter-spacing: 0.2em; margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-label { font-size: 0.82rem; color: var(--line); letter-spacing: 0.1em; }
-    .form-input, .form-select, .form-textarea {
-      border: 1px solid var(--line);
-      background: white;
-      padding: 8px 12px;
-      font-family: 'Noto Serif TC', serif;
-      font-size: 0.9rem;
-      color: var(--ink);
-      border-radius: 2px;
-    }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-      box-shadow: 0 0 0 2px rgba(184,134,11,0.15);
-    }
-    .form-textarea { resize: vertical; min-height: 70px; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line-light); justify-content: flex-end; }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: var(--ink);
-      color: var(--paper);
-      padding: 14px 24px;
-      border-left: 4px solid var(--gold);
-      font-size: 0.9rem;
-      letter-spacing: 0.05em;
-      box-shadow: 0 8px 24px var(--shadow);
-      z-index: 2000;
-      transform: translateX(120%);
-      transition: transform 0.3s ease;
-    }
-    .toast.show { transform: translateX(0); }
-
-    /* Loading */
-    .loading { text-align: center; padding: 60px; color: var(--line); font-size: 1.2rem; letter-spacing: 0.3em; }
-
-    /* Stats bar */
-    .stats-bar {
-      background: var(--paper-dark);
-      border-bottom: 1px solid var(--line);
-      padding: 8px 30px;
-      display: flex;
-      gap: 30px;
-      font-size: 0.82rem;
-      color: var(--ink-light);
-    }
-    .stat-item { display: flex; gap: 6px; align-items: center; }
-    .stat-num { font-weight: 700; color: var(--red); font-size: 1rem; }
-
-    .scroll-hint { text-align: center; color: var(--line); font-size: 0.75rem; padding: 8px; letter-spacing: 0.1em; }
-
-    .gen-1 { border-top-color: #8b1a1a; }
-    .gen-2 { border-top-color: #b8860b; }
-    .gen-3 { border-top-color: #2e6b4f; }
-    .gen-4 { border-top-color: #1a3d6b; }
-    .gen-5 { border-top-color: #5c3d7a; }
-    .gen-6 { border-top-color: #6b3a1a; }
-
-    /* ========== 用戶管理 Modal ========== */
-    .user-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-bottom: 20px; }
-    .user-table th { background: var(--ink); color: var(--paper); padding: 8px 12px; text-align: left; font-weight: 400; letter-spacing: 0.1em; }
-    .user-table td { padding: 8px 12px; border-bottom: 1px solid var(--line-light); }
-    .user-table tr:nth-child(even) td { background: var(--paper-dark); }
-    .role-badge {
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 10px;
-      letter-spacing: 0.05em;
-    }
-    .role-badge.admin { background: var(--gold); color: var(--ink); }
-    .role-badge.user { background: var(--line); color: var(--paper); }
-
-    /* ========== 繁簡切換動畫 ========== */
-    .lang-switching { opacity: 0.6; transition: opacity 0.2s; }
+    /* ===== Modal ===== */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,16,8,.7);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.show{display:flex}
+    .modal{background:var(--paper);border:2px solid var(--line);border-top:4px solid var(--red);padding:30px;width:580px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+    .modal-title{font-family:'Ma Shan Zheng',serif;font-size:1.6rem;color:var(--red);letter-spacing:.2em;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:12px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-group{display:flex;flex-direction:column;gap:6px}
+    .form-group.full{grid-column:1/-1}
+    .form-label{font-size:.82rem;color:var(--line);letter-spacing:.1em}
+    .form-input,.form-select,.form-textarea{border:1px solid var(--line);background:white;padding:8px 12px;font-family:'Noto Serif TC',serif;font-size:.9rem;color:var(--ink);border-radius:2px}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,134,11,.15)}
+    .form-textarea{resize:vertical;min-height:70px}
+    .modal-actions{display:flex;gap:10px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line-light);justify-content:flex-end}
+    .toast{position:fixed;bottom:30px;right:30px;background:var(--ink);color:var(--paper);padding:14px 24px;border-left:4px solid var(--gold);font-size:.9rem;box-shadow:0 8px 24px var(--shadow);z-index:2000;transform:translateX(120%);transition:transform .3s ease}
+    .toast.show{transform:translateX(0)}
+    .loading{text-align:center;padding:60px;color:var(--line);font-size:1.2rem;letter-spacing:.3em}
+    .user-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-bottom:20px}
+    .user-table th{background:var(--ink);color:var(--paper);padding:8px 12px;text-align:left;font-weight:400;letter-spacing:.1em}
+    .user-table td{padding:8px 12px;border-bottom:1px solid var(--line-light)}
+    .user-table tr:nth-child(even) td{background:var(--paper-dark)}
+    .role-badge{font-size:.72rem;padding:2px 8px;border-radius:10px}
+    .role-badge.admin{background:var(--gold);color:var(--ink)}
+    .role-badge.user{background:var(--line);color:var(--paper)}
   </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <div class="header-inner">
     <div class="header-dec">龍</div>
@@ -500,18 +175,13 @@
   </div>
 </div>
 
-<!-- Navigation -->
 <div class="nav">
-  <button class="nav-btn active" id="navBook" onclick="switchView('book', this)">📜 譜牒檢視</button>
-  <button class="nav-btn" id="navTree" onclick="switchView('tree', this)">🌳 世系圖</button>
-  <button class="nav-btn" id="navList" onclick="switchView('list', this)">📋 族員列表</button>
-
-  <!-- 管理員專屬按鈕 -->
+  <button class="nav-btn active" id="navBook" onclick="switchView('book',this)">📜 譜牒檢視</button>
+  <button class="nav-btn" id="navTree" onclick="switchView('tree',this)">🌳 世系圖</button>
+  <button class="nav-btn" id="navList" onclick="switchView('list',this)">📋 族員列表</button>
   <button class="nav-btn admin-only" id="btnAddMember" onclick="showAddModal()" style="color:var(--gold-light)">✚ 新增族員</button>
   <button class="nav-btn admin-only" id="btnInitData" onclick="initData()" style="color:#c4a882">⟳ 載入示例</button>
   <button class="nav-btn admin-only" id="btnUserMgmt" onclick="showUserModal()" style="color:#a0c4ff">👥 用戶管理</button>
-
-  <!-- 右側區域 -->
   <div class="nav-user-area">
     <button class="lang-btn" onclick="toggleLang()" id="langBtn">切換簡體</button>
     <span class="nav-user-badge" id="userBadge">載入中...</span>
@@ -519,43 +189,32 @@
   </div>
 </div>
 
-<!-- Stats -->
-<div class="stats-bar" id="statsBar">
+<div class="stats-bar">
   <div class="stat-item" id="statItem1">族員總數：<span class="stat-num" id="statTotal">0</span></div>
   <div class="stat-item" id="statItem2">世代數：<span class="stat-num" id="statGens">0</span></div>
   <div class="stat-item" id="statItem3">男丁：<span class="stat-num" id="statMale">0</span></div>
   <div class="stat-item" id="statItem4">女眷：<span class="stat-num" id="statFemale">0</span></div>
 </div>
 
-<!-- Main Layout -->
 <div class="main">
-  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-title" id="sideSearchTitle">🔍 搜尋族員</div>
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="輸入名諱..." onkeyup="onSearchKey(event)">
-      <button class="btn-sm" onclick="doSearch()" id="btnSearch">搜</button>
-      <button class="btn-sm gold" onclick="clearSearch()" id="btnClear">清</button>
+      <button class="btn-sm" onclick="doSearch()">搜</button>
+      <button class="btn-sm gold" onclick="clearSearch()">清</button>
     </div>
     <div class="sidebar-title" id="sideGenTitle">世代篩選</div>
-    <div class="gen-filter" id="genFilter">
-      <span class="gen-tag active" onclick="filterGen(0, this)" id="genAll">全部</span>
-    </div>
+    <div class="gen-filter" id="genFilter"><span class="gen-tag active" onclick="filterGen(0,this)">全部</span></div>
     <div class="sidebar-title" id="sideMemberTitle">族員名錄</div>
-    <ul class="member-list" id="memberList">
-      <li class="loading" style="font-size:0.8rem;padding:20px 0">載入中...</li>
-    </ul>
+    <ul class="member-list" id="memberList"><li class="loading" style="font-size:.85rem;padding:16px 0">載入中...</li></ul>
   </div>
 
-  <!-- Book View -->
   <div id="view-book" class="view-panel active content">
     <div class="scroll-hint" id="scrollHint">← 橫向捲動閱覽 →</div>
-    <div class="genealogy-book" id="genealogyBook">
-      <div class="loading">載入族譜中，請稍候...</div>
-    </div>
+    <div class="genealogy-book" id="genealogyBook"><div class="loading">載入族譜中，請稍候...</div></div>
   </div>
 
-  <!-- Tree View -->
   <div id="view-tree" class="view-panel content">
     <div class="tree-view-container">
       <div class="tree-title" id="treeTitle">世系傳承圖</div>
@@ -563,111 +222,51 @@
     </div>
   </div>
 
-  <!-- List View -->
   <div id="view-list" class="view-panel content">
     <div style="padding:30px">
-      <table style="width:100%;border-collapse:collapse;font-size:0.88rem">
-        <thead>
-        <tr style="background:var(--ink);color:var(--paper)">
-          <th style="padding:10px 14px;text-align:left;letter-spacing:0.1em" id="thGen">世</th>
-          <th style="padding:10px 14px;text-align:left" id="thName">名諱</th>
-          <th style="padding:10px 14px;text-align:left" id="thTitle">稱謂</th>
-          <th style="padding:10px 14px;text-align:left" id="thLife">生卒</th>
-          <th style="padding:10px 14px;text-align:left" id="thSpouse">配偶</th>
-          <th style="padding:10px 14px;text-align:left" id="thNote">備注</th>
-          <th style="padding:10px 14px;text-align:center" id="thOp">操作</th>
-        </tr>
-        </thead>
+      <table style="width:100%;border-collapse:collapse;font-size:.95rem">
+        <thead><tr style="background:var(--ink);color:var(--paper)">
+          <th style="padding:11px 14px;text-align:left" id="thGen">世</th>
+          <th style="padding:11px 14px;text-align:left" id="thName">名諱</th>
+          <th style="padding:11px 14px;text-align:left" id="thTitle">稱謂</th>
+          <th style="padding:11px 14px;text-align:left" id="thLife">生卒</th>
+          <th style="padding:11px 14px;text-align:left" id="thSpouse">妣 / 配偶</th>
+          <th style="padding:11px 14px;text-align:left" id="thNote">備注</th>
+          <th style="padding:11px 14px;text-align:center" id="thOp">操作</th>
+        </tr></thead>
         <tbody id="listTableBody"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- Detail Panel -->
   <div class="detail-panel hidden" id="detailPanel">
     <div class="detail-scroll" id="detailContent"></div>
   </div>
 </div>
 
-<!-- 族員 Add/Edit Modal -->
+<!-- 族員 Modal -->
 <div class="modal-overlay" id="formModal">
   <div class="modal">
     <div class="modal-title" id="modalTitle">新增族員</div>
     <input type="hidden" id="formId">
     <div class="form-grid">
-      <div class="form-group">
-        <label class="form-label" id="lbName">名諱 *</label>
-        <input type="text" class="form-input" id="fName" placeholder="名字">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbCourtesy">字號</label>
-        <input type="text" class="form-input" id="fCourtesy" placeholder="字號">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbGender">性別</label>
-        <select class="form-select" id="fGender">
-          <option value="男">男</option>
-          <option value="女">女</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbGen">世代 *</label>
-        <input type="number" class="form-input" id="fGeneration" placeholder="1,2,3..." min="1">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbTitle">稱謂</label>
-        <input type="text" class="form-input" id="fTitle" placeholder="如：祖 諱">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbParent">父親</label>
-        <select class="form-select" id="fParentId">
-          <option value="">（無，為始祖）</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbBirth">生年</label>
-        <input type="text" class="form-input" id="fBirthDate" placeholder="如：清道光年間">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbDeath">卒年</label>
-        <input type="text" class="form-input" id="fDeathDate" placeholder="如：清咸豐年間">
-      </div>
-      <div class="form-group full">
-        <label class="form-label" id="lbBdNote">生卒備注</label>
-        <input type="text" class="form-input" id="fBirthDeathNote" placeholder="如：生卒俱失考">
-      </div>
-      <div class="form-group full">
-        <label class="form-label" id="lbRelation">關係描述</label>
-        <input type="text" class="form-input" id="fRelationDesc" placeholder="如：有禄公之五子也">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbSpouseMaiden">配偶（妣）</label>
-        <input type="text" class="form-input" id="fSpouseMaiden" placeholder="妣/氏">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbSpouseName">配偶姓名</label>
-        <input type="text" class="form-input" id="fSpouseName" placeholder="配偶名">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbSpouseNote">配偶備注</label>
-        <input type="text" class="form-input" id="fSpouseNote" placeholder="如：失記">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbFilial">孝男</label>
-        <input type="text" class="form-input" id="fFilialSons" placeholder="兒子名">
-      </div>
-      <div class="form-group">
-        <label class="form-label" id="lbKids">生子人數</label>
-        <input type="number" class="form-input" id="fChildrenCount" placeholder="0" min="0">
-      </div>
-      <div class="form-group full">
-        <label class="form-label" id="lbWorship">奉祀者</label>
-        <input type="text" class="form-input" id="fWorshippedBy" placeholder="如：孝男鐘奉祀">
-      </div>
-      <div class="form-group full">
-        <label class="form-label" id="lbNotes">備注</label>
-        <textarea class="form-textarea" id="fNotes" placeholder="其他備注事項..."></textarea>
-      </div>
+      <div class="form-group"><label class="form-label" id="lbName">名諱 *</label><input type="text" class="form-input" id="fName" placeholder="名字"></div>
+      <div class="form-group"><label class="form-label" id="lbCourtesy">字號</label><input type="text" class="form-input" id="fCourtesy" placeholder="字號"></div>
+      <div class="form-group"><label class="form-label" id="lbGender">性別</label><select class="form-select" id="fGender"><option value="男">男</option><option value="女">女</option></select></div>
+      <div class="form-group"><label class="form-label" id="lbGen">世代 *</label><input type="number" class="form-input" id="fGeneration" placeholder="1,2,3..." min="1"></div>
+      <div class="form-group"><label class="form-label" id="lbTitle">稱謂</label><input type="text" class="form-input" id="fTitle" placeholder="如：祖 諱"></div>
+      <div class="form-group"><label class="form-label" id="lbParent">父親</label><select class="form-select" id="fParentId"><option value="">（無，為始祖）</option></select></div>
+      <div class="form-group"><label class="form-label" id="lbBirth">生年</label><input type="text" class="form-input" id="fBirthDate" placeholder="如：清道光年間"></div>
+      <div class="form-group"><label class="form-label" id="lbDeath">卒年</label><input type="text" class="form-input" id="fDeathDate" placeholder="如：清咸豐年間"></div>
+      <div class="form-group full"><label class="form-label" id="lbBdNote">生卒備注</label><input type="text" class="form-input" id="fBirthDeathNote" placeholder="如：生卒俱失考"></div>
+      <div class="form-group full"><label class="form-label" id="lbRelation">關係描述</label><input type="text" class="form-input" id="fRelationDesc" placeholder="如：有禄公之五子也"></div>
+      <div class="form-group"><label class="form-label" id="lbSpouseMaiden">妣（稱謂）</label><input type="text" class="form-input" id="fSpouseMaiden" placeholder="如：妣、繼妣"></div>
+      <div class="form-group"><label class="form-label" id="lbSpouseName">配偶姓名</label><input type="text" class="form-input" id="fSpouseName" placeholder="如：陳氏、失記"></div>
+      <div class="form-group"><label class="form-label" id="lbSpouseNote">配偶備注</label><input type="text" class="form-input" id="fSpouseNote" placeholder="如：失記"></div>
+      <div class="form-group"><label class="form-label" id="lbFilial">孝男</label><input type="text" class="form-input" id="fFilialSons" placeholder="兒子名"></div>
+      <div class="form-group"><label class="form-label" id="lbKids">生子人數</label><input type="number" class="form-input" id="fChildrenCount" placeholder="0" min="0"></div>
+      <div class="form-group full"><label class="form-label" id="lbWorship">奉祀者</label><input type="text" class="form-input" id="fWorshippedBy" placeholder="如：孝男鐘奉祀"></div>
+      <div class="form-group full"><label class="form-label" id="lbNotes">備注</label><textarea class="form-textarea" id="fNotes" placeholder="其他備注事項..."></textarea></div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()" id="btnCancel">取消</button>
@@ -680,736 +279,381 @@
 <div class="modal-overlay" id="userModal">
   <div class="modal" style="width:640px">
     <div class="modal-title" id="userModalTitle">用戶管理</div>
-    <table class="user-table" id="userTable">
-      <thead>
-      <tr>
-        <th id="utName">帳號</th>
-        <th id="utDisplay">顯示名稱</th>
-        <th id="utRole">角色</th>
-        <th id="utOp">操作</th>
-      </tr>
-      </thead>
+    <table class="user-table">
+      <thead><tr><th id="utName">帳號</th><th id="utDisplay">顯示名稱</th><th id="utRole">角色</th><th id="utOp">操作</th></tr></thead>
       <tbody id="userTableBody"></tbody>
     </table>
-
-    <!-- 新增用戶表單 -->
     <div style="border-top:1px solid var(--line-light);padding-top:16px">
-      <div style="font-size:0.85rem;color:var(--red);letter-spacing:0.15em;margin-bottom:12px" id="addUserTitle">新增用戶</div>
+      <div style="font-size:.85rem;color:var(--red);letter-spacing:.15em;margin-bottom:12px" id="addUserTitle">新增用戶</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
-        <div class="form-group">
-          <label class="form-label" id="nuLbName">帳號 *</label>
-          <input type="text" class="form-input" id="nuUsername" placeholder="登入帳號">
-        </div>
-        <div class="form-group">
-          <label class="form-label" id="nuLbPwd">密碼 *</label>
-          <input type="password" class="form-input" id="nuPassword" placeholder="登入密碼">
-        </div>
-        <div class="form-group">
-          <label class="form-label" id="nuLbRole">角色</label>
-          <select class="form-select" id="nuRole">
-            <option value="USER">普通用戶</option>
-            <option value="ADMIN">管理員</option>
-          </select>
-        </div>
+        <div class="form-group"><label class="form-label" id="nuLbName">帳號 *</label><input type="text" class="form-input" id="nuUsername" placeholder="登入帳號"></div>
+        <div class="form-group"><label class="form-label" id="nuLbPwd">密碼 *</label><input type="password" class="form-input" id="nuPassword" placeholder="登入密碼"></div>
+        <div class="form-group"><label class="form-label" id="nuLbRole">角色</label><select class="form-select" id="nuRole"><option value="USER">普通用戶</option><option value="ADMIN">管理員</option></select></div>
         <button class="btn btn-primary" onclick="createUser()" style="flex:none;padding:8px 18px" id="btnCreateUser">新增</button>
       </div>
-      <div class="form-group" style="margin-top:10px">
-        <label class="form-label" id="nuLbDisplay">顯示名稱</label>
-        <input type="text" class="form-input" id="nuDisplayName" placeholder="可選，默認同帳號">
-      </div>
+      <div class="form-group" style="margin-top:10px"><label class="form-label" id="nuLbDisplay">顯示名稱</label><input type="text" class="form-input" id="nuDisplayName" placeholder="可選，默認同帳號"></div>
     </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeUserModal()" id="btnCloseUser">關閉</button>
-    </div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeUserModal()" id="btnCloseUser">關閉</button></div>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-  const API = '/api/family';
-  const AUTH = '/api/auth';
-  let allMembers = [];
-  let selectedId = null;
-  let currentView = 'book';
-  let filterGenNum = 0;
-  let isAdmin = false;
-  let isSimplified = false;
+  const API='/api/family', AUTH='/api/auth';
+  let allMembers=[],selectedId=null,currentView='book',filterGenNum=0,isAdmin=false,isSimplified=false;
+  const CN=['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+  function toChineseGen(n){return(n>=1&&n<=12)?CN[n-1]:n}
 
-  const CHINESE_NUMS = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
-  function toChineseGen(n) { return (n >= 1 && n <= 12) ? CHINESE_NUMS[n-1] : n; }
+  const T2S={'家譜管理系統':'家谱管理系统','傳承先祖之德':'传承先祖之德','弘揚家族精神':'弘扬家族精神',
+    '譜牒檢視':'谱牒检视','世系圖':'世系图','族員列表':'族员列表','新增族員':'新增族员',
+    '載入示例':'载入示例','用戶管理':'用户管理','切換簡體':'切换繁体','切換繁體':'切换简体',
+    '搜尋族員':'搜寻族员','世代篩選':'世代筛选','族員名錄':'族员名录',
+    '橫向捲動閱覽':'横向滚动阅览','世系傳承圖':'世系传承图','名諱':'名讳','稱謂':'称谓',
+    '備注':'备注','族員總數':'族员总数','世代數':'世代数','管理員':'管理员',
+    '普通用戶':'普通用户','帳號':'账号','顯示名稱':'显示名称','新增用戶':'新增用户',
+    '密碼':'密码','關閉':'关闭','取消':'取消','儲存':'储存','字號':'字号','性別':'性别',
+    '父親':'父亲','生卒備注':'生卒备注','關係描述':'关系描述','生子人數':'生子人数',
+    '奉祀者':'奉祀者','編輯':'编辑','刪除':'删除'};
+  function t(s){return isSimplified?(T2S[s]||s):s}
 
-  // ===== 繁簡對照表 =====
-  const TRAD_TO_SIMP = {
-    '家譜管理系統':'家谱管理系统',
-    '傳承先祖之德':'传承先祖之德',
-    '弘揚家族精神':'弘扬家族精神',
-    '譜牒檢視':'谱牒检视',
-    '世系圖':'世系图',
-    '族員列表':'族员列表',
-    '新增族員':'新增族员',
-    '載入示例':'载入示例',
-    '用戶管理':'用户管理',
-    '切換簡體':'切换繁体',
-    '切換繁體':'切换简体',
-    '搜尋族員':'搜寻族员',
-    '輸入名諱':'输入名讳',
-    '世代篩選':'世代筛选',
-    '族員名錄':'族员名录',
-    '橫向捲動閱覽':'横向滚动阅览',
-    '世系傳承圖':'世系传承图',
-    '名諱':'名讳',
-    '稱謂':'称谓',
-    '配偶':'配偶',
-    '備注':'备注',
-    '操作':'操作',
-    '族員總數':'族员总数',
-    '世代數':'世代数',
-    '男丁':'男丁',
-    '女眷':'女眷',
-    '退出':'退出',
-    '管理員':'管理员',
-    '普通用戶':'普通用户',
-    '帳號':'账号',
-    '顯示名稱':'显示名称',
-    '角色':'角色',
-    '新增用戶':'新增用户',
-    '密碼':'密码',
-    '登入帳號':'登入账号',
-    '登入密碼':'登入密码',
-    '關閉':'关闭',
-    '新增':'新增',
-    '取消':'取消',
-    '儲存':'储存',
-    '字號':'字号',
-    '性別':'性别',
-    '世代':'世代',
-    '父親':'父亲',
-    '生年':'生年',
-    '卒年':'卒年',
-    '生卒備注':'生卒备注',
-    '關係描述':'关系描述',
-    '孝男':'孝男',
-    '生子人數':'生子人数',
-    '奉祀者':'奉祀者',
-    '編輯':'编辑',
-    '刪除':'删除',
-    '尚無族員資料':'尚无族员资料',
-    '載入中':'载入中',
-    '尚無資料':'尚无资料',
-    '確定要刪除':'确定要删除',
-    '請輸入名諱':'请输入名讳',
-    '請輸入世代':'请输入世代',
-    '更新成功':'更新成功',
-    '新增成功':'新增成功',
-    '儲存失敗':'储存失败',
-    '已刪除':'已删除',
-    '刪除失敗':'删除失败'
-  };
-  const SIMP_TO_TRAD = Object.fromEntries(Object.entries(TRAD_TO_SIMP).map(([k,v])=>[v,k]));
+  const SID={'headerTitle':['家　譜　管　理　系　統','家　谱　管　理　系　统'],
+    'headerSub':['傳承先祖之德・弘揚家族精神','传承先祖之德・弘扬家族精神'],
+    'navBook':['📜 譜牒檢視','📜 谱牒检视'],'navTree':['🌳 世系圖','🌳 世系图'],
+    'navList':['📋 族員列表','📋 族员列表'],'btnAddMember':['✚ 新增族員','✚ 新增族员'],
+    'btnInitData':['⟳ 載入示例','⟳ 载入示例'],'btnUserMgmt':['👥 用戶管理','👥 用户管理'],
+    'langBtn':['切換簡體','切換繁體'],'sideSearchTitle':['🔍 搜尋族員','🔍 搜寻族员'],
+    'sideGenTitle':['世代篩選','世代筛选'],'sideMemberTitle':['族員名錄','族员名录'],
+    'scrollHint':['← 橫向捲動閱覽 →','← 横向滚动阅览 →'],'treeTitle':['世系傳承圖','世系传承图'],
+    'thName':['名諱','名讳'],'thTitle':['稱謂','称谓'],'thNote':['備注','备注'],
+    'lbName':['名諱 *','名讳 *'],'lbCourtesy':['字號','字号'],'lbGender':['性別','性别'],
+    'lbGen':['世代 *','世代 *'],'lbTitle':['稱謂','称谓'],'lbParent':['父親','父亲'],
+    'lbBdNote':['生卒備注','生卒备注'],'lbRelation':['關係描述','关系描述'],
+    'lbSpouseMaiden':['妣（稱謂）','妣（称谓）'],'lbSpouseNote':['配偶備注','配偶备注'],
+    'lbKids':['生子人數','生子人数'],'lbWorship':['奉祀者','奉祀者'],
+    'lbNotes':['備注','备注'],'btnCancel':['取消','取消'],'btnSave':['儲存','储存'],
+    'userModalTitle':['用戶管理','用户管理'],'utName':['帳號','账号'],
+    'utDisplay':['顯示名稱','显示名称'],'addUserTitle':['新增用戶','新增用户'],
+    'nuLbName':['帳號 *','账号 *'],'nuLbPwd':['密碼 *','密码 *'],
+    'nuLbDisplay':['顯示名稱','显示名称'],'btnCreateUser':['新增','新增'],'btnCloseUser':['關閉','关闭']};
 
-  function t(text) {
-    if (!isSimplified) return text;
-    return TRAD_TO_SIMP[text] || text;
-  }
-
-  // 切換頁面上所有靜態文字
-  const STATIC_IDS = {
-    'headerTitle': ['家　譜　管　理　系　統', '家　谱　管　理　系　统'],
-    'headerSub': ['傳承先祖之德・弘揚家族精神', '传承先祖之德・弘扬家族精神'],
-    'navBook': ['📜 譜牒檢視', '📜 谱牒检视'],
-    'navTree': ['🌳 世系圖', '🌳 世系图'],
-    'navList': ['📋 族員列表', '📋 族员列表'],
-    'btnAddMember': ['✚ 新增族員', '✚ 新增族员'],
-    'btnInitData': ['⟳ 載入示例', '⟳ 载入示例'],
-    'btnUserMgmt': ['👥 用戶管理', '👥 用户管理'],
-    'langBtn': ['切換簡體', '切換繁體'],
-    'sideSearchTitle': ['🔍 搜尋族員', '🔍 搜寻族员'],
-    'sideGenTitle': ['世代篩選', '世代筛选'],
-    'sideMemberTitle': ['族員名錄', '族员名录'],
-    'scrollHint': ['← 橫向捲動閱覽 →', '← 横向滚动阅览 →'],
-    'treeTitle': ['世系傳承圖', '世系传承图'],
-    'statItem1': null,
-    'statItem2': null,
-    'thGen': ['世', '世'],
-    'thName': ['名諱', '名讳'],
-    'thTitle': ['稱謂', '称谓'],
-    'thLife': ['生卒', '生卒'],
-    'thSpouse': ['配偶', '配偶'],
-    'thNote': ['備注', '备注'],
-    'thOp': ['操作', '操作'],
-    'lbName': ['名諱 *', '名讳 *'],
-    'lbCourtesy': ['字號', '字号'],
-    'lbGender': ['性別', '性别'],
-    'lbGen': ['世代 *', '世代 *'],
-    'lbTitle': ['稱謂', '称谓'],
-    'lbParent': ['父親', '父亲'],
-    'lbBirth': ['生年', '生年'],
-    'lbDeath': ['卒年', '卒年'],
-    'lbBdNote': ['生卒備注', '生卒备注'],
-    'lbRelation': ['關係描述', '关系描述'],
-    'lbSpouseMaiden': ['配偶（妣）', '配偶（妣）'],
-    'lbSpouseName': ['配偶姓名', '配偶姓名'],
-    'lbSpouseNote': ['配偶備注', '配偶备注'],
-    'lbFilial': ['孝男', '孝男'],
-    'lbKids': ['生子人數', '生子人数'],
-    'lbWorship': ['奉祀者', '奉祀者'],
-    'lbNotes': ['備注', '备注'],
-    'btnCancel': ['取消', '取消'],
-    'btnSave': ['儲存', '储存'],
-    'userModalTitle': ['用戶管理', '用户管理'],
-    'utName': ['帳號', '账号'],
-    'utDisplay': ['顯示名稱', '显示名称'],
-    'utRole': ['角色', '角色'],
-    'utOp': ['操作', '操作'],
-    'addUserTitle': ['新增用戶', '新增用户'],
-    'nuLbName': ['帳號 *', '账号 *'],
-    'nuLbPwd': ['密碼 *', '密码 *'],
-    'nuLbRole': ['角色', '角色'],
-    'nuLbDisplay': ['顯示名稱', '显示名称'],
-    'btnCreateUser': ['新增', '新增'],
-    'btnCloseUser': ['關閉', '关闭'],
-  };
-
-  function toggleLang() {
-    isSimplified = !isSimplified;
-    const idx = isSimplified ? 1 : 0;
-    for (const [id, vals] of Object.entries(STATIC_IDS)) {
-      if (!vals) continue;
-      const el = document.getElementById(id);
-      if (el) el.textContent = vals[idx];
-    }
-    // placeholder
-    document.getElementById('searchInput').placeholder = isSimplified ? '输入名讳...' : '輸入名諱...';
-    // 重新渲染動態內容
-    renderSidebar();
-    renderCurrentView();
-    if (selectedId) {
-      const m = allMembers.find(x=>x.id===selectedId);
-      if (m) showDetail(m);
-    }
+  function toggleLang(){
+    isSimplified=!isSimplified;
+    const i=isSimplified?1:0;
+    for(const[id,v]of Object.entries(SID)){const el=document.getElementById(id);if(el&&v)el.textContent=v[i];}
+    document.getElementById('searchInput').placeholder=isSimplified?'输入名讳...':'輸入名諱...';
+    renderSidebar();renderCurrentView();
+    if(selectedId){const m=allMembers.find(x=>x.id===selectedId);if(m)showDetail(m);}
     updateStatLabels();
   }
-
-  function updateStatLabels() {
-    const labels = isSimplified
-      ? ['族员总数：', '世代数：', '男丁：', '女眷：']
-      : ['族員總數：', '世代數：', '男丁：', '女眷：'];
-    const ids = ['statTotal','statGens','statMale','statFemale'];
-    const items = document.querySelectorAll('.stat-item');
-    items.forEach((item, i) => {
-      const num = item.querySelector('.stat-num');
-      if (num) item.innerHTML = labels[i] + `<span class="stat-num">${num.textContent}</span>`;
-    });
+  function updateStatLabels(){
+    const L=isSimplified?['族员总数：','世代数：','男丁：','女眷：']:['族員總數：','世代數：','男丁：','女眷：'];
+    document.querySelectorAll('.stat-item').forEach((el,i)=>{
+      const n=el.querySelector('.stat-num');if(n)el.innerHTML=L[i]+`<span class="stat-num">${n.textContent}</span>`;});
   }
 
-  // ===== 登入/用戶 =====
-  async function loadUserInfo() {
-    try {
-      const res = await fetch(AUTH + '/me');
-      if (res.status === 401 || res.status === 403) {
-        location.href = '/login.html';
-        return;
-      }
-      const user = await res.json();
-      isAdmin = user.isAdmin;
-      const badge = document.getElementById('userBadge');
-      badge.textContent = (isAdmin ? '👑 ' : '👤 ') + user.username;
-      badge.className = 'nav-user-badge' + (isAdmin ? ' admin' : '');
-      // 顯示/隱藏管理員按鈕
-      document.querySelectorAll('.admin-only').forEach(el => {
-        el.style.display = isAdmin ? '' : 'none';
-      });
-      window._isAdmin = isAdmin;
-    } catch(e) {
-      location.href = '/login.html';
-    }
+  async function loadUserInfo(){
+    try{
+      const r=await fetch(AUTH+'/me');
+      if(r.status===401||r.status===403){location.href='/login.html';return;}
+      const u=await r.json();isAdmin=u.isAdmin;
+      const b=document.getElementById('userBadge');
+      b.textContent=(isAdmin?'👑 ':'👤 ')+u.username;
+      b.className='nav-user-badge'+(isAdmin?' admin':'');
+      document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
+    }catch(e){location.href='/login.html';}
   }
+  async function doLogout(){try{await fetch(AUTH+'/logout',{method:'POST'});}catch(e){}location.href='/login.html';}
 
-  async function doLogout() {
-    try {
-      await fetch(AUTH + '/logout', { method: 'POST' });
-    } catch(e) {}
-    location.href = '/login.html';
-  }
-
-  // ===== API =====
-  async function api(path, method='GET', body=null) {
-    const opts = { method, headers: {'Content-Type':'application/json;charset=UTF-8'} };
-    if (body) opts.body = JSON.stringify(body);
-    const r = await fetch(API + path, opts);
-    if (r.status === 401) { location.href = '/login.html'; return; }
-    if (r.status === 403) { showToast(isSimplified ? '无权限操作' : '無權限操作'); return; }
-    if (!r.ok) throw new Error(await r.text());
+  async function api(path,method='GET',body=null){
+    const opts={method,headers:{'Content-Type':'application/json;charset=UTF-8'}};
+    if(body)opts.body=JSON.stringify(body);
+    const r=await fetch(API+path,opts);
+    if(r.status===401){location.href='/login.html';return;}
+    if(r.status===403){showToast('無權限操作');return;}
+    if(!r.ok)throw new Error(await r.text());
     return r.json();
   }
-
-  async function loadMembers() {
-    try {
-      allMembers = await api('');
-      if (!allMembers) return;
-      renderStats();
-      renderSidebar();
-      renderGenFilter();
-      renderCurrentView();
-    } catch(e) { showToast('載入失敗: ' + e.message); }
+  async function loadMembers(){
+    try{allMembers=await api('');if(!allMembers)return;renderStats();renderSidebar();renderGenFilter();renderCurrentView();}
+    catch(e){showToast('載入失敗:'+e.message);}
+  }
+  async function initData(){
+    try{await api('/init','POST');showToast(isSimplified?'示例数据已载入！':'示例數據已載入！');await loadMembers();}
+    catch(e){showToast('初始化失敗');}
   }
 
-  async function initData() {
-    try {
-      await api('/init', 'POST');
-      showToast(isSimplified ? '示例数据已载入！' : '示例數據已載入！');
-      await loadMembers();
-    } catch(e) { showToast('初始化失敗: ' + e.message); }
+  function renderStats(){
+    document.getElementById('statTotal').textContent=allMembers.length;
+    document.getElementById('statGens').textContent=new Set(allMembers.map(m=>m.generation)).size;
+    document.getElementById('statMale').textContent=allMembers.filter(m=>m.gender==='男').length;
+    document.getElementById('statFemale').textContent=allMembers.filter(m=>m.gender==='女').length;
   }
-
-  // ===== Stats =====
-  function renderStats() {
-    const total = allMembers.length;
-    const gens = new Set(allMembers.map(m=>m.generation)).size;
-    const male = allMembers.filter(m=>m.gender==='男').length;
-    const female = allMembers.filter(m=>m.gender==='女').length;
-    document.getElementById('statTotal').textContent = total;
-    document.getElementById('statGens').textContent = gens;
-    document.getElementById('statMale').textContent = male;
-    document.getElementById('statFemale').textContent = female;
+  function renderSidebar(members=allMembers){
+    const list=document.getElementById('memberList');
+    if(!members.length){list.innerHTML=`<li style="padding:20px;color:var(--line);font-size:.9rem">${isSimplified?'尚无族员资料':'尚無族員資料'}</li>`;return;}
+    list.innerHTML=members.map(m=>`<li class="member-item${selectedId===m.id?' selected':''}" onclick="selectMember(${m.id})"><span class="gen-badge">${toChineseGen(m.generation)}世</span>${m.name}</li>`).join('');
   }
-
-  // ===== Sidebar =====
-  function renderSidebar(members = allMembers) {
-    const list = document.getElementById('memberList');
-    const noData = isSimplified ? '尚无族员资料' : '尚無族員資料';
-    if (!members.length) { list.innerHTML = `<li style="padding:20px;color:var(--line);font-size:0.85rem">${noData}</li>`; return; }
-    list.innerHTML = members.map(m => `
-      <li class="member-item ${selectedId===m.id?'selected':''}" onclick="selectMember(${m.id})">
-        <span class="gen-badge">${toChineseGen(m.generation)}${isSimplified?'世':'世'}</span>
-        ${m.name}
-      </li>
-    `).join('');
+  function renderGenFilter(){
+    const gens=[...new Set(allMembers.map(m=>m.generation))].sort((a,b)=>a-b);
+    document.getElementById('genFilter').innerHTML=`<span class="gen-tag${filterGenNum===0?' active':''}" onclick="filterGen(0,this)">全部</span>`+
+      gens.map(g=>`<span class="gen-tag${filterGenNum===g?' active':''}" onclick="filterGen(${g},this)">${toChineseGen(g)}世</span>`).join('');
   }
-
-  function renderGenFilter() {
-    const gens = [...new Set(allMembers.map(m=>m.generation))].sort((a,b)=>a-b);
-    const filter = document.getElementById('genFilter');
-    const allText = isSimplified ? '全部' : '全部';
-    filter.innerHTML = `<span class="gen-tag ${filterGenNum===0?'active':''}" onclick="filterGen(0,this)">${allText}</span>` +
-      gens.map(g => `<span class="gen-tag ${filterGenNum===g?'active':''}" onclick="filterGen(${g},this)">${toChineseGen(g)}世</span>`).join('');
+  function filterGen(gen,el){
+    filterGenNum=gen;document.querySelectorAll('.gen-tag').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+    renderSidebar(gen===0?allMembers:allMembers.filter(m=>m.generation===gen));renderCurrentView();
   }
+  function onSearchKey(e){if(e.key==='Enter')doSearch();}
+  async function doSearch(){const q=document.getElementById('searchInput').value.trim();if(!q){clearSearch();return;}renderSidebar(await api('/search?name='+encodeURIComponent(q)));}
+  function clearSearch(){document.getElementById('searchInput').value='';renderSidebar(allMembers);}
 
-  function filterGen(gen, el) {
-    filterGenNum = gen;
-    document.querySelectorAll('.gen-tag').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active');
-    const filtered = gen === 0 ? allMembers : allMembers.filter(m=>m.generation===gen);
-    renderSidebar(filtered);
+  function switchView(name,el){
+    currentView=name;
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');
+    document.querySelectorAll('.view-panel').forEach(p=>p.classList.remove('active'));document.getElementById('view-'+name).classList.add('active');
     renderCurrentView();
   }
+  function renderCurrentView(){if(currentView==='book')renderBookView();else if(currentView==='tree')renderTreeView();else renderListView();}
 
-  function onSearchKey(e) { if (e.key==='Enter') doSearch(); }
-  async function doSearch() {
-    const q = document.getElementById('searchInput').value.trim();
-    if (!q) { clearSearch(); return; }
-    try {
-      const res = await api('/search?name=' + encodeURIComponent(q));
-      renderSidebar(res);
-    } catch(e) {}
-  }
-  function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    renderSidebar(allMembers);
-  }
-
-  // ===== Views =====
-  function switchView(name, el) {
-    currentView = name;
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    if (el) el.classList.add('active');
-    document.querySelectorAll('.view-panel').forEach(p=>p.classList.remove('active'));
-    document.getElementById('view-'+name).classList.add('active');
-    renderCurrentView();
+  /* ===== 書頁：右欄=本人 左欄=妣 ===== */
+  function renderBookView(){
+    const c=document.getElementById('genealogyBook');
+    const members=filterGenNum===0?allMembers:allMembers.filter(m=>m.generation===filterGenNum);
+    if(!members.length){c.innerHTML=`<div class="loading" style="padding:80px"><div style="font-size:3rem;margin-bottom:20px">📜</div><div>${isSimplified?'尚无族员资料':'尚無族員資料'}</div></div>`;return;}
+    const byGen={};members.forEach(m=>{if(!byGen[m.generation])byGen[m.generation]=[];byGen[m.generation].push(m);});
+    c.innerHTML=Object.keys(byGen).map(Number).sort((a,b)=>a-b).map(gen=>`
+      <div class="gen-group-wrap">
+        <div class="gen-group-header">${toChineseGen(gen)}&nbsp;世</div>
+        <div class="gen-pages-container">${byGen[gen].map(m=>renderBookPage(m)).join('')}</div>
+      </div>`).join('');
   }
 
-  function renderCurrentView() {
-    if (currentView === 'book') renderBookView();
-    else if (currentView === 'tree') renderTreeView();
-    else if (currentView === 'list') renderListView();
-  }
+  function renderBookPage(m){
+    const sel=selectedId===m.id?'selected':'';
+    const gc=`gen-${Math.min(m.generation,6)}`;
+    const hasBi=m.spouseMaidenName||m.spouseName||m.spouseNote;
+    const noBi=hasBi?'':'no-bi';
 
-  // ===== BOOK VIEW =====
-  function renderBookView() {
-    const container = document.getElementById('genealogyBook');
-    const members = filterGenNum === 0 ? allMembers : allMembers.filter(m=>m.generation===filterGenNum);
-    const noData = isSimplified ? '尚无族员资料' : '尚無族員資料';
-    const hint = isSimplified ? '请点击「载入示例」或「新增族员」开始' : '請點擊「載入示例」或「新增族員」開始';
+    // 右欄：本人
+    let main=`<div class="page-main-col">`;
+    if(m.title)main+=`<div class="page-title">${m.title}</div>`;
+    main+=`<div class="page-name">${m.name}</div>`;
+    if(m.relationDesc)main+=`<div class="page-relation">${m.relationDesc}</div>`;
+    if(m.birthDeathNote){main+=`<div class="page-life">${m.birthDeathNote}</div>`;}
+    else{if(m.birthDate)main+=`<div class="page-life">生：${m.birthDate}</div>`;if(m.deathDate)main+=`<div class="page-life">卒：${m.deathDate}</div>`;}
+    main+=`<div class="page-filial">`;
+    if(m.filialSons)main+=`<div class="page-filial-text">孝男${m.filialSons}</div>`;
+    if(m.worshippedBy)main+=`<div class="page-worship">${m.worshippedBy}</div>`;
+    main+=`</div></div>`;
 
-    if (!members.length) {
-      container.innerHTML = `<div class="loading" style="padding:80px;color:var(--line)">
-        <div style="font-size:3rem;margin-bottom:20px">📜</div>
-        <div>${noData}</div>
-        <div style="font-size:0.8rem;margin-top:10px">${hint}</div>
-      </div>`;
-      return;
+    // 左欄：妣（仿古族譜左側獨立一欄）
+    let bi=`<div class="page-bi-col">`;
+    if(hasBi){
+      bi+=`<div class="bi-label">${m.spouseMaidenName||'妣'}</div>`;
+      if(m.spouseName)bi+=`<div class="bi-name">${m.spouseName}</div>`;
+      if(m.spouseNote)bi+=`<div class="bi-note">${m.spouseNote}</div>`;
+      if(m.childrenCount)bi+=`<div class="bi-kids">生子${m.childrenCount}人</div>`;
     }
+    bi+=`</div>`;
 
-    const byGen = {};
-    members.forEach(m => {
-      if (!byGen[m.generation]) byGen[m.generation] = [];
-      byGen[m.generation].push(m);
-    });
-
-    const gens = Object.keys(byGen).map(Number).sort((a,b)=>a-b);
-    container.innerHTML = gens.map(gen => {
-      const pages = byGen[gen].map(m => renderBookPage(m)).join('');
-      return `
-        <div style="display:flex;align-items:stretch;margin-right:16px">
-          <div class="gen-group-header">${toChineseGen(gen)}&nbsp;世</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;padding:8px">${pages}</div>
-        </div>`;
-    }).join('');
+    return`<div class="gen-page ${sel} ${gc} ${noBi}" onclick="selectMember(${m.id})" id="page-${m.id}">${main}${bi}</div>`;
   }
 
-  function renderBookPage(m) {
-    const isSelected = selectedId === m.id;
-    const genClass = `gen-${Math.min(m.generation, 6)}`;
-    let content = `<div class="gen-page ${isSelected?'selected':''} ${genClass}" onclick="selectMember(${m.id})" id="page-${m.id}">`;
-    if (m.title) content += `<div class="title-line">${m.title}</div>`;
-    content += `<div class="name-main">${m.name}</div>`;
-    if (m.relationDesc) content += `<div class="detail-text">${m.relationDesc}</div>`;
-    if (m.birthDeathNote) {
-      content += `<div class="detail-text" style="color:var(--line);margin-top:8px">${m.birthDeathNote}</div>`;
-    } else {
-      if (m.birthDate) content += `<div class="detail-text">生：${m.birthDate}</div>`;
-      if (m.deathDate) content += `<div class="detail-text">卒：${m.deathDate}</div>`;
-    }
-    if (m.spouseMaidenName || m.spouseName) {
-      content += `<div class="spouse-section">`;
-      content += `<div class="spouse-label">${m.spouseMaidenName||'妣'}</div>`;
-      if (m.spouseNote) content += `<div class="detail-text">${m.spouseNote}</div>`;
-      if (m.spouseName && m.spouseName !== '失記') content += `<div class="detail-text">${m.spouseName}</div>`;
-      if (m.childrenCount) content += `<div class="detail-text">生子${m.childrenCount}人</div>`;
-      content += `</div>`;
-    }
-    content += `<div class="filial-section">`;
-    if (m.filialSons) content += `<div class="detail-text">孝男${m.filialSons}</div>`;
-    if (m.worshippedBy) content += `<div class="worshipped">${m.worshippedBy}</div>`;
-    content += `</div></div>`;
-    return content;
+  /* ===== 世系圖 ===== */
+  async function renderTreeView(){
+    const c=document.getElementById('treeView');
+    try{
+      const tree=await api('/tree');
+      if(!tree||!tree.length){c.innerHTML=`<div class="loading">${isSimplified?'尚无资料':'尚無資料'}</div>`;return;}
+      c.innerHTML='<div style="overflow-x:auto"><div style="display:inline-flex;flex-direction:column;align-items:center;min-width:max-content;padding:20px">'+renderTreeNodes(tree)+'</div></div>';
+    }catch(e){c.innerHTML='<div class="loading" style="color:red">載入失敗</div>';}
   }
-
-  // ===== TREE VIEW =====
-  async function renderTreeView() {
-    const container = document.getElementById('treeView');
-    try {
-      const tree = await api('/tree');
-      if (!tree || !tree.length) { container.innerHTML = `<div class="loading">${isSimplified?'尚无资料':'尚無資料'}</div>`; return; }
-      container.innerHTML = '<div style="overflow-x:auto"><div style="display:inline-flex;flex-direction:column;align-items:center;min-width:max-content;padding:20px">' + renderTreeNodes(tree) + '</div></div>';
-    } catch(e) { container.innerHTML = '<div class="loading" style="color:red">載入失敗</div>'; }
-  }
-
-  function renderTreeNodes(nodes) {
-    if (!nodes || !nodes.length) return '';
-    return `<div style="display:flex;align-items:flex-start;gap:8px;position:relative">${nodes.map(n => renderTreeNode(n)).join('')}</div>`;
-  }
-
-  function renderTreeNode(node) {
-    const hasChildren = node.children && node.children.length > 0;
-    const genClass = `gen-${Math.min(node.generation, 6)}`;
-    const isSelected = selectedId === node.id;
-    let html = `<div style="display:flex;flex-direction:column;align-items:center">`;
-    html += `<div class="tree-card ${genClass} ${isSelected?'selected':''}" onclick="selectMember(${node.id})">
+  function renderTreeNodes(nodes){if(!nodes||!nodes.length)return'';return`<div style="display:flex;align-items:flex-start;gap:8px;position:relative">${nodes.map(n=>renderTreeNode(n)).join('')}</div>`;}
+  function renderTreeNode(node){
+    const hc=node.children&&node.children.length>0;
+    const gc=`gen-${Math.min(node.generation,6)}`,sel=selectedId===node.id?'selected':'';
+    let h=`<div style="display:flex;flex-direction:column;align-items:center">`;
+    h+=`<div class="tree-card ${gc} ${sel}" onclick="selectMember(${node.id})">
       <div class="tc-gen">${toChineseGen(node.generation)}世</div>
       <div class="tc-name">${node.name}</div>
-      ${node.birthDeathNote ? `<div class="tc-dates">${node.birthDeathNote}</div>` : ''}
-      ${node.spouseMaidenName && node.spouseName ? `<div class="tc-dates">配：${node.spouseName}</div>` : ''}
+      ${node.birthDeathNote?`<div class="tc-dates">${node.birthDeathNote}</div>`:''}
+      ${node.spouseMaidenName?`<div class="tc-dates">${node.spouseMaidenName}${node.spouseName?'：'+node.spouseName:''}</div>`:''}
     </div>`;
-    if (hasChildren) {
-      html += `<div class="tree-line-v"></div>`;
-      html += `<div style="display:flex;align-items:flex-start;gap:8px;padding-top:0;position:relative">`;
-      if (node.children.length > 1) html += `<div style="position:absolute;top:0;left:50px;right:50px;height:2px;background:var(--line)"></div>`;
-      html += node.children.map(child => renderTreeNode(child)).join('');
-      html += `</div>`;
+    if(hc){
+      h+=`<div class="tree-line-v"></div><div style="display:flex;align-items:flex-start;gap:8px;position:relative">`;
+      if(node.children.length>1)h+=`<div style="position:absolute;top:0;left:50px;right:50px;height:2px;background:var(--line)"></div>`;
+      h+=node.children.map(c=>renderTreeNode(c)).join('');h+=`</div>`;
     }
-    html += `</div>`;
-    return html;
+    return h+`</div>`;
   }
 
-  // ===== LIST VIEW =====
-  function renderListView() {
-    const tbody = document.getElementById('listTableBody');
-    const members = filterGenNum === 0 ? allMembers : allMembers.filter(m=>m.generation===filterGenNum);
-    if (!members.length) {
-      tbody.innerHTML = `<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--line)">${isSimplified?'尚无资料':'尚無資料'}</td></tr>`;
-      return;
-    }
-    const editTxt = isSimplified ? '编辑' : '編輯';
-    const delTxt = isSimplified ? '删除' : '刪除';
-    tbody.innerHTML = members.map((m, i) => `
+  /* ===== 列表 ===== */
+  function renderListView(){
+    const tbody=document.getElementById('listTableBody');
+    const members=filterGenNum===0?allMembers:allMembers.filter(m=>m.generation===filterGenNum);
+    if(!members.length){tbody.innerHTML=`<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--line)">${isSimplified?'尚无资料':'尚無資料'}</td></tr>`;return;}
+    const et=isSimplified?'编辑':'編輯',dt=isSimplified?'删除':'刪除';
+    tbody.innerHTML=members.map((m,i)=>`
       <tr style="background:${i%2===0?'var(--paper)':'var(--paper-dark)'};border-bottom:1px solid var(--line-light);cursor:pointer" onclick="selectMember(${m.id})">
-        <td style="padding:10px 14px;font-weight:700;color:var(--red)">${toChineseGen(m.generation)}世</td>
-        <td style="padding:10px 14px;font-family:'Ma Shan Zheng',serif;font-size:1.1rem">${m.name}</td>
-        <td style="padding:10px 14px;color:var(--line)">${m.title||'-'}</td>
-        <td style="padding:10px 14px;font-size:0.82rem">${m.birthDeathNote || (m.birthDate||'')+(m.deathDate?'—'+m.deathDate:'') || '-'}</td>
-        <td style="padding:10px 14px;font-size:0.82rem">${m.spouseName||m.spouseMaidenName||'-'}</td>
-        <td style="padding:10px 14px;font-size:0.82rem;color:var(--ink-light)">${m.relationDesc||m.notes||'-'}</td>
-        <td style="padding:10px 14px;text-align:center">
-          ${isAdmin ? `
-          <button onclick="event.stopPropagation();showEditModal(${m.id})" style="background:var(--gold);color:white;border:none;padding:4px 10px;cursor:pointer;font-size:0.8rem;border-radius:2px;margin-right:4px">${editTxt}</button>
-          <button onclick="event.stopPropagation();deleteMember(${m.id})" style="background:#c0392b;color:white;border:none;padding:4px 10px;cursor:pointer;font-size:0.8rem;border-radius:2px">${delTxt}</button>
-          ` : '<span style="color:var(--line);font-size:0.78rem">僅供查看</span>'}
+        <td style="padding:11px 14px;font-weight:700;color:var(--red);font-size:1.05rem">${toChineseGen(m.generation)}世</td>
+        <td style="padding:11px 14px;font-family:'Ma Shan Zheng',serif;font-size:1.25rem">${m.name}</td>
+        <td style="padding:11px 14px;color:var(--line)">${m.title||'-'}</td>
+        <td style="padding:11px 14px;font-size:.9rem">${m.birthDeathNote||(m.birthDate||'')+(m.deathDate?'—'+m.deathDate:'')||'-'}</td>
+        <td style="padding:11px 14px;font-size:.9rem">
+          ${m.spouseMaidenName?`<span style="color:var(--red);font-weight:700;margin-right:4px">${m.spouseMaidenName}</span>`:''}${m.spouseName||(!m.spouseMaidenName?'-':'')}
         </td>
-      </tr>
-    `).join('');
+        <td style="padding:11px 14px;font-size:.9rem;color:var(--ink-light)">${m.relationDesc||m.notes||'-'}</td>
+        <td style="padding:11px 14px;text-align:center">
+          ${isAdmin?`<button onclick="event.stopPropagation();showEditModal(${m.id})" style="background:var(--gold);color:white;border:none;padding:4px 10px;cursor:pointer;font-size:.84rem;border-radius:2px;margin-right:4px">${et}</button>
+          <button onclick="event.stopPropagation();deleteMember(${m.id})" style="background:#c0392b;color:white;border:none;padding:4px 10px;cursor:pointer;font-size:.84rem;border-radius:2px">${dt}</button>`
+          :'<span style="color:var(--line);font-size:.85rem">僅供查看</span>'}
+        </td>
+      </tr>`).join('');
   }
 
-  // ===== SELECT & DETAIL =====
-  function selectMember(id) {
-    selectedId = id;
-    const m = allMembers.find(x=>x.id===id);
-    if (!m) return;
-    document.querySelectorAll('.gen-page').forEach(p => p.classList.remove('selected'));
-    const page = document.getElementById('page-'+id);
-    if (page) page.classList.add('selected');
-    showDetail(m);
-    renderSidebar(filterGenNum===0?allMembers:allMembers.filter(x=>x.generation===filterGenNum));
+  /* ===== 選取 & 詳情 ===== */
+  function selectMember(id){
+    selectedId=id;const m=allMembers.find(x=>x.id===id);if(!m)return;
+    document.querySelectorAll('.gen-page').forEach(p=>p.classList.remove('selected'));
+    const page=document.getElementById('page-'+id);
+    if(page){page.classList.add('selected');page.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});}
+    showDetail(m);renderSidebar(filterGenNum===0?allMembers:allMembers.filter(x=>x.generation===filterGenNum));
   }
 
-  function showDetail(m) {
-    const panel = document.getElementById('detailPanel');
-    panel.classList.remove('hidden');
-    const parent = allMembers.find(x=>x.id===m.parentId);
-    const children = allMembers.filter(x=>x.parentId===m.id);
-    const s = isSimplified;
-
-    const adminActions = isAdmin ? `
+  function showDetail(m){
+    document.getElementById('detailPanel').classList.remove('hidden');
+    const parent=allMembers.find(x=>x.id===m.parentId);
+    const children=allMembers.filter(x=>x.parentId===m.id);
+    const s=isSimplified;
+    const aa=isAdmin?`
       <button class="btn btn-primary" onclick="showEditModal(${m.id})">✎ ${s?'编辑':'編輯'}</button>
-      <button class="btn btn-secondary" onclick="showAddChildModal(${m.id})">＋${s?'子':'子'}</button>
+      <button class="btn btn-secondary" onclick="showAddChildModal(${m.id})">＋子</button>
       <button class="btn btn-danger" onclick="deleteMember(${m.id})">✕</button>
-    ` : `<span style="color:var(--line);font-size:0.82rem;padding:8px">${s?'仅供查看':'僅供查看'}</span>`;
+    `:`<span style="color:var(--line);font-size:.9rem;padding:8px">${s?'仅供查看':'僅供查看'}</span>`;
 
-    document.getElementById('detailContent').innerHTML = `
+    document.getElementById('detailContent').innerHTML=`
       <div class="detail-header">
         <div class="detail-gen">${toChineseGen(m.generation)} 世</div>
-        ${m.title ? `<div class="detail-title-label">${m.title}</div>` : ''}
+        ${m.title?`<div class="detail-title-label">${m.title}</div>`:''}
         <div class="detail-name">${m.name}</div>
-        ${m.courtesy ? `<div style="font-size:0.8rem;color:var(--line)">${s?'字':'字'} ${m.courtesy}</div>` : ''}
+        ${m.courtesy?`<div style="font-size:.9rem;color:var(--line)">字 ${m.courtesy}</div>`:''}
       </div>
-      ${m.relationDesc ? `<div class="detail-note">${m.relationDesc}</div>` : ''}
+      ${m.relationDesc?`<div class="detail-note">${m.relationDesc}</div>`:''}
       <div class="detail-section">
         <div class="detail-section-title">${s?'生 卒 资 料':'生 卒 資 料'}</div>
-        ${m.birthDate ? `<div class="detail-row"><span class="detail-label">${s?'生年':'生年'}</span><span class="detail-value">${m.birthDate}</span></div>` : ''}
-        ${m.deathDate ? `<div class="detail-row"><span class="detail-label">${s?'卒年':'卒年'}</span><span class="detail-value">${m.deathDate}</span></div>` : ''}
-        ${m.birthDeathNote ? `<div class="detail-row"><span class="detail-label">${s?'备注':'備注'}</span><span class="detail-value">${m.birthDeathNote}</span></div>` : ''}
+        ${m.birthDate?`<div class="detail-row"><span class="detail-label">生年</span><span class="detail-value">${m.birthDate}</span></div>`:''}
+        ${m.deathDate?`<div class="detail-row"><span class="detail-label">卒年</span><span class="detail-value">${m.deathDate}</span></div>`:''}
+        ${m.birthDeathNote?`<div class="detail-row"><span class="detail-label">${s?'备注':'備注'}</span><span class="detail-value">${m.birthDeathNote}</span></div>`:''}
       </div>
-      ${(m.spouseMaidenName || m.spouseName) ? `
+      ${(m.spouseMaidenName||m.spouseName)?`
       <div class="detail-section">
         <div class="detail-section-title">${s?'配 偶 资 料':'配 偶 資 料'}</div>
-        ${m.spouseMaidenName ? `<div class="detail-row"><span class="detail-label">妣</span><span class="detail-value">${m.spouseMaidenName}</span></div>` : ''}
-        ${m.spouseName ? `<div class="detail-row"><span class="detail-label">${s?'配偶':'配偶'}</span><span class="detail-value">${m.spouseName}</span></div>` : ''}
-        ${m.spouseNote ? `<div class="detail-row"><span class="detail-label">${s?'备注':'備注'}</span><span class="detail-value">${m.spouseNote}</span></div>` : ''}
-        ${m.childrenCount ? `<div class="detail-row"><span class="detail-label">${s?'生子':'生子'}</span><span class="detail-value">${m.childrenCount} 人</span></div>` : ''}
-      </div>` : ''}
+        ${m.spouseMaidenName?`<div class="detail-row"><span class="detail-label" style="color:var(--red);font-size:1rem;font-weight:700">妣</span><span class="detail-value" style="font-family:'Ma Shan Zheng',serif;font-size:1.15rem;color:var(--red)">${m.spouseMaidenName}</span></div>`:''}
+        ${m.spouseName?`<div class="detail-row"><span class="detail-label">${s?'配偶':'配偶'}</span><span class="detail-value">${m.spouseName}</span></div>`:''}
+        ${m.spouseNote?`<div class="detail-row"><span class="detail-label">${s?'备注':'備注'}</span><span class="detail-value">${m.spouseNote}</span></div>`:''}
+        ${m.childrenCount?`<div class="detail-row"><span class="detail-label">生子</span><span class="detail-value">${m.childrenCount} 人</span></div>`:''}
+      </div>`:''}
       <div class="detail-section">
         <div class="detail-section-title">${s?'宗 族 关 系':'宗 族 關 係'}</div>
-        ${parent ? `<div class="detail-row"><span class="detail-label">${s?'父亲':'父親'}</span><span class="detail-value" style="cursor:pointer;color:var(--red)" onclick="selectMember(${parent.id})">${parent.name} →</span></div>` : ''}
-        ${m.filialSons ? `<div class="detail-row"><span class="detail-label">${s?'孝男':'孝男'}</span><span class="detail-value">${m.filialSons}</span></div>` : ''}
-        ${children.length ? `<div class="detail-row"><span class="detail-label">${s?'子女':'子女'}</span><span class="detail-value">${children.map(c=>`<span style="cursor:pointer;color:var(--red)" onclick="selectMember(${c.id})">${c.name}</span>`).join('、')}</span></div>` : ''}
-        ${m.worshippedBy ? `<div class="detail-row"><span class="detail-label">${s?'奉祀':'奉祀'}</span><span class="detail-value">${m.worshippedBy}</span></div>` : ''}
+        ${parent?`<div class="detail-row"><span class="detail-label">${s?'父亲':'父親'}</span><span class="detail-value" style="cursor:pointer;color:var(--red)" onclick="selectMember(${parent.id})">${parent.name} →</span></div>`:''}
+        ${m.filialSons?`<div class="detail-row"><span class="detail-label">孝男</span><span class="detail-value">${m.filialSons}</span></div>`:''}
+        ${children.length?`<div class="detail-row"><span class="detail-label">子女</span><span class="detail-value">${children.map(c=>`<span style="cursor:pointer;color:var(--red)" onclick="selectMember(${c.id})">${c.name}</span>`).join('、')}</span></div>`:''}
+        ${m.worshippedBy?`<div class="detail-row"><span class="detail-label">${s?'奉祀':'奉祀'}</span><span class="detail-value">${m.worshippedBy}</span></div>`:''}
       </div>
-      ${m.notes ? `<div class="detail-note">${m.notes}</div>` : ''}
-      <div class="detail-actions">${adminActions}</div>
-    `;
+      ${m.notes?`<div class="detail-note">${m.notes}</div>`:''}
+      <div class="detail-actions">${aa}</div>`;
   }
 
-  // ===== MODAL =====
-  function showAddModal() {
-    if (!isAdmin) return;
-    document.getElementById('modalTitle').textContent = isSimplified ? '新增族员' : '新增族員';
-    document.getElementById('formId').value = '';
-    clearForm();
-    populateParentSelect();
+  function showAddModal(){if(!isAdmin)return;document.getElementById('modalTitle').textContent=isSimplified?'新增族员':'新增族員';document.getElementById('formId').value='';clearForm();populateParentSelect();document.getElementById('formModal').classList.add('show');}
+  function showAddChildModal(pid){if(!isAdmin)return;showAddModal();const p=allMembers.find(m=>m.id===pid);if(p){document.getElementById('fParentId').value=pid;document.getElementById('fGeneration').value=p.generation+1;document.getElementById('modalTitle').textContent=`新增 ${p.name} 之子`;}}
+  async function showEditModal(id){
+    if(!isAdmin)return;const m=allMembers.find(x=>x.id===id);if(!m)return;
+    document.getElementById('modalTitle').textContent=`${isSimplified?'编辑':'編輯'}：${m.name}`;
+    document.getElementById('formId').value=m.id;populateParentSelect(m.id);
+    const F={fName:'name',fCourtesy:'courtesy',fTitle:'title',fBirthDate:'birthDate',fDeathDate:'deathDate',
+      fBirthDeathNote:'birthDeathNote',fRelationDesc:'relationDesc',fSpouseMaiden:'spouseMaidenName',
+      fSpouseName:'spouseName',fSpouseNote:'spouseNote',fFilialSons:'filialSons',fWorshippedBy:'worshippedBy',fNotes:'notes'};
+    for(const[k,v]of Object.entries(F))document.getElementById(k).value=m[v]||'';
+    document.getElementById('fGender').value=m.gender||'男';
+    document.getElementById('fGeneration').value=m.generation||'';
+    document.getElementById('fChildrenCount').value=m.childrenCount||'';
+    document.getElementById('fParentId').value=m.parentId||'';
     document.getElementById('formModal').classList.add('show');
   }
-
-  function showAddChildModal(parentId) {
-    if (!isAdmin) return;
-    showAddModal();
-    const parent = allMembers.find(m=>m.id===parentId);
-    if (parent) {
-      document.getElementById('fParentId').value = parentId;
-      document.getElementById('fGeneration').value = parent.generation + 1;
-      document.getElementById('modalTitle').textContent = `${isSimplified?'新增':'新增'} ${parent.name} ${isSimplified?'之子':'之子'}`;
-    }
-  }
-
-  async function showEditModal(id) {
-    if (!isAdmin) return;
-    const m = allMembers.find(x=>x.id===id);
-    if (!m) return;
-    document.getElementById('modalTitle').textContent = `${isSimplified?'编辑':'編輯'}：${m.name}`;
-    document.getElementById('formId').value = m.id;
-    populateParentSelect(m.id);
-    document.getElementById('fName').value = m.name||'';
-    document.getElementById('fCourtesy').value = m.courtesy||'';
-    document.getElementById('fGender').value = m.gender||'男';
-    document.getElementById('fGeneration').value = m.generation||'';
-    document.getElementById('fTitle').value = m.title||'';
-    document.getElementById('fParentId').value = m.parentId||'';
-    document.getElementById('fBirthDate').value = m.birthDate||'';
-    document.getElementById('fDeathDate').value = m.deathDate||'';
-    document.getElementById('fBirthDeathNote').value = m.birthDeathNote||'';
-    document.getElementById('fRelationDesc').value = m.relationDesc||'';
-    document.getElementById('fSpouseMaiden').value = m.spouseMaidenName||'';
-    document.getElementById('fSpouseName').value = m.spouseName||'';
-    document.getElementById('fSpouseNote').value = m.spouseNote||'';
-    document.getElementById('fFilialSons').value = m.filialSons||'';
-    document.getElementById('fChildrenCount').value = m.childrenCount||'';
-    document.getElementById('fWorshippedBy').value = m.worshippedBy||'';
-    document.getElementById('fNotes').value = m.notes||'';
-    document.getElementById('formModal').classList.add('show');
-  }
-
-  function populateParentSelect(excludeId=null) {
-    const sel = document.getElementById('fParentId');
-    const noParent = isSimplified ? '（无，为始祖）' : '（無，為始祖）';
-    sel.innerHTML = `<option value="">${noParent}</option>` +
-      allMembers.filter(m=>m.id!==excludeId).sort((a,b)=>a.generation-b.generation||a.id-b.id)
+  function populateParentSelect(ex=null){
+    document.getElementById('fParentId').innerHTML=`<option value="">${isSimplified?'（无，为始祖）':'（無，為始祖）'}</option>`+
+      allMembers.filter(m=>m.id!==ex).sort((a,b)=>a.generation-b.generation||a.id-b.id)
       .map(m=>`<option value="${m.id}">${toChineseGen(m.generation)}世 ${m.name}</option>`).join('');
   }
-
-  function clearForm() {
+  function clearForm(){
     ['fName','fCourtesy','fTitle','fBirthDate','fDeathDate','fBirthDeathNote','fRelationDesc',
-     'fSpouseMaiden','fSpouseName','fSpouseNote','fFilialSons','fWorshippedBy','fNotes'].forEach(id=>{
-      document.getElementById(id).value='';
-    });
-    document.getElementById('fGender').value='男';
-    document.getElementById('fGeneration').value='';
-    document.getElementById('fChildrenCount').value='';
-    document.getElementById('fParentId').value='';
+     'fSpouseMaiden','fSpouseName','fSpouseNote','fFilialSons','fWorshippedBy','fNotes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('fGender').value='男';document.getElementById('fGeneration').value='';
+    document.getElementById('fChildrenCount').value='';document.getElementById('fParentId').value='';
+  }
+  function closeModal(){document.getElementById('formModal').classList.remove('show');}
+  async function saveMember(){
+    if(!isAdmin)return;
+    const name=document.getElementById('fName').value.trim(),gen=parseInt(document.getElementById('fGeneration').value);
+    if(!name){showToast(isSimplified?'请输入名讳':'請輸入名諱');return;}
+    if(!gen){showToast(isSimplified?'请输入世代':'請輸入世代');return;}
+    const data={name,generation:gen,courtesy:document.getElementById('fCourtesy').value||null,gender:document.getElementById('fGender').value,
+      title:document.getElementById('fTitle').value||null,parentId:document.getElementById('fParentId').value||null,
+      birthDate:document.getElementById('fBirthDate').value||null,deathDate:document.getElementById('fDeathDate').value||null,
+      birthDeathNote:document.getElementById('fBirthDeathNote').value||null,relationDesc:document.getElementById('fRelationDesc').value||null,
+      spouseMaidenName:document.getElementById('fSpouseMaiden').value||null,spouseName:document.getElementById('fSpouseName').value||null,
+      spouseNote:document.getElementById('fSpouseNote').value||null,filialSons:document.getElementById('fFilialSons').value||null,
+      childrenCount:parseInt(document.getElementById('fChildrenCount').value)||null,
+      worshippedBy:document.getElementById('fWorshippedBy').value||null,notes:document.getElementById('fNotes').value||null};
+    const id=document.getElementById('formId').value;
+    try{
+      if(id)await api('/'+id,'PUT',data);else await api('','POST',data);
+      showToast(id?(isSimplified?'更新成功！':'更新成功！'):(isSimplified?'新增成功！':'新增成功！'));
+      closeModal();await loadMembers();if(id){const m=allMembers.find(m=>m.id==id);if(m)showDetail(m);}
+    }catch(e){showToast((isSimplified?'储存失败:':'儲存失敗:')+e.message);}
+  }
+  async function deleteMember(id){
+    if(!isAdmin)return;const m=allMembers.find(x=>x.id===id);
+    if(!confirm(isSimplified?`确定要删除「${m?.name}」吗？`:`確定要刪除「${m?.name}」嗎？`))return;
+    try{await api('/'+id,'DELETE');showToast(isSimplified?'已删除':'已刪除');selectedId=null;document.getElementById('detailPanel').classList.add('hidden');await loadMembers();}
+    catch(e){showToast(isSimplified?'删除失败':'刪除失敗');}
   }
 
-  function closeModal() { document.getElementById('formModal').classList.remove('show'); }
-
-  async function saveMember() {
-    if (!isAdmin) return;
-    const name = document.getElementById('fName').value.trim();
-    const gen = parseInt(document.getElementById('fGeneration').value);
-    if (!name) { showToast(isSimplified ? '请输入名讳' : '請輸入名諱'); return; }
-    if (!gen) { showToast(isSimplified ? '请输入世代' : '請輸入世代'); return; }
-    const data = {
-      name, generation: gen,
-      courtesy: document.getElementById('fCourtesy').value||null,
-      gender: document.getElementById('fGender').value,
-      title: document.getElementById('fTitle').value||null,
-      parentId: document.getElementById('fParentId').value||null,
-      birthDate: document.getElementById('fBirthDate').value||null,
-      deathDate: document.getElementById('fDeathDate').value||null,
-      birthDeathNote: document.getElementById('fBirthDeathNote').value||null,
-      relationDesc: document.getElementById('fRelationDesc').value||null,
-      spouseMaidenName: document.getElementById('fSpouseMaiden').value||null,
-      spouseName: document.getElementById('fSpouseName').value||null,
-      spouseNote: document.getElementById('fSpouseNote').value||null,
-      filialSons: document.getElementById('fFilialSons').value||null,
-      childrenCount: parseInt(document.getElementById('fChildrenCount').value)||null,
-      worshippedBy: document.getElementById('fWorshippedBy').value||null,
-      notes: document.getElementById('fNotes').value||null,
-    };
-    const id = document.getElementById('formId').value;
-    try {
-      if (id) await api('/'+id, 'PUT', data);
-      else await api('', 'POST', data);
-      showToast(id ? (isSimplified?'更新成功！':'更新成功！') : (isSimplified?'新增成功！':'新增成功！'));
-      closeModal();
-      await loadMembers();
-      if (id) { const m = allMembers.find(m=>m.id==id); if(m) showDetail(m); }
-    } catch(e) { showToast((isSimplified?'储存失败: ':'儲存失敗: ')+e.message); }
+  async function showUserModal(){if(!isAdmin)return;await refreshUserList();document.getElementById('userModal').classList.add('show');}
+  async function refreshUserList(){
+    try{
+      const users=await fetch(AUTH+'/users').then(r=>r.json());
+      document.getElementById('userTableBody').innerHTML=users.map(u=>`<tr>
+        <td>${u.username}</td><td>${u.displayName||u.username}</td>
+        <td><span class="role-badge ${u.role==='ADMIN'?'admin':'user'}">${u.role==='ADMIN'?(isSimplified?'管理员':'管理員'):(isSimplified?'普通用户':'普通用戶')}</span></td>
+        <td>${u.username!=='admin'?`<button onclick="deleteUser(${u.id})" style="background:#c0392b;color:white;border:none;padding:3px 10px;cursor:pointer;font-size:.78rem;border-radius:2px">${isSimplified?'删除':'刪除'}</button>`:'<span style="color:var(--line);font-size:.75rem">系統帳號</span>'}</td>
+      </tr>`).join('');
+    }catch(e){showToast('載入失敗');}
   }
-
-  async function deleteMember(id) {
-    if (!isAdmin) return;
-    const m = allMembers.find(x=>x.id===id);
-    const confirmMsg = isSimplified ? `确定要删除「${m?.name}」吗？` : `確定要刪除「${m?.name}」嗎？`;
-    if (!confirm(confirmMsg)) return;
-    try {
-      await api('/'+id, 'DELETE');
-      showToast(isSimplified ? '已删除' : '已刪除');
-      selectedId = null;
-      document.getElementById('detailPanel').classList.add('hidden');
-      await loadMembers();
-    } catch(e) { showToast(isSimplified ? '删除失败' : '刪除失敗'); }
-  }
-
-  // ===== 用戶管理 =====
-  async function showUserModal() {
-    if (!isAdmin) return;
-    await refreshUserList();
-    document.getElementById('userModal').classList.add('show');
-  }
-
-  async function refreshUserList() {
-    try {
-      const users = await fetch(AUTH + '/users').then(r=>r.json());
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = users.map(u => `
-        <tr>
-          <td>${u.username}</td>
-          <td>${u.displayName || u.username}</td>
-          <td><span class="role-badge ${u.role==='ADMIN'?'admin':'user'}">${u.role==='ADMIN'?(isSimplified?'管理员':'管理員'):(isSimplified?'普通用户':'普通用戶')}</span></td>
-          <td>
-            ${u.username !== 'admin' ? `<button onclick="deleteUser(${u.id})" style="background:#c0392b;color:white;border:none;padding:3px 10px;cursor:pointer;font-size:0.78rem;border-radius:2px">${isSimplified?'删除':'刪除'}</button>` : '<span style="color:var(--line);font-size:0.75rem">系統帳號</span>'}
-          </td>
-        </tr>
-      `).join('');
-    } catch(e) { showToast('載入用戶列表失敗'); }
-  }
-
-  async function createUser() {
-    const username = document.getElementById('nuUsername').value.trim();
-    const password = document.getElementById('nuPassword').value.trim();
-    const role = document.getElementById('nuRole').value;
-    const displayName = document.getElementById('nuDisplayName').value.trim();
-    if (!username || !password) { showToast(isSimplified ? '账号和密码不能为空' : '帳號和密碼不能為空'); return; }
-    try {
-      const res = await fetch(AUTH + '/users', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ username, password, role, displayName: displayName || username })
-      });
-      if (!res.ok) { showToast(await res.text()); return; }
-      showToast(isSimplified ? '用户创建成功！' : '用戶創建成功！');
-      document.getElementById('nuUsername').value = '';
-      document.getElementById('nuPassword').value = '';
-      document.getElementById('nuDisplayName').value = '';
+  async function createUser(){
+    const un=document.getElementById('nuUsername').value.trim(),pw=document.getElementById('nuPassword').value.trim();
+    const role=document.getElementById('nuRole').value,dn=document.getElementById('nuDisplayName').value.trim();
+    if(!un||!pw){showToast(isSimplified?'账号和密码不能为空':'帳號和密碼不能為空');return;}
+    try{
+      const r=await fetch(AUTH+'/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:un,password:pw,role,displayName:dn||un})});
+      if(!r.ok){showToast(await r.text());return;}
+      showToast(isSimplified?'用户创建成功！':'用戶創建成功！');
+      document.getElementById('nuUsername').value='';document.getElementById('nuPassword').value='';document.getElementById('nuDisplayName').value='';
       await refreshUserList();
-    } catch(e) { showToast('創建失敗'); }
+    }catch(e){showToast('創建失敗');}
   }
-
-  async function deleteUser(id) {
-    if (!confirm(isSimplified ? '确定删除此用户？' : '確定刪除此用戶？')) return;
-    try {
-      await fetch(AUTH + '/users/' + id, { method: 'DELETE' });
-      showToast(isSimplified ? '已删除' : '已刪除');
-      await refreshUserList();
-    } catch(e) { showToast('刪除失敗'); }
+  async function deleteUser(id){
+    if(!confirm(isSimplified?'确定删除此用户？':'確定刪除此用戶？'))return;
+    try{await fetch(AUTH+'/users/'+id,{method:'DELETE'});showToast(isSimplified?'已删除':'已刪除');await refreshUserList();}
+    catch(e){showToast('刪除失敗');}
   }
+  function closeUserModal(){document.getElementById('userModal').classList.remove('show');}
 
-  function closeUserModal() { document.getElementById('userModal').classList.remove('show'); }
+  function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-  // ===== TOAST =====
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), 3000);
-  }
-
-  // Close modals on overlay click
-  document.getElementById('formModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-  document.getElementById('userModal').addEventListener('click', function(e) { if (e.target === this) closeUserModal(); });
-
-  // ===== INIT =====
-  loadUserInfo().then(() => loadMembers());
+  document.getElementById('formModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  document.getElementById('userModal').addEventListener('click',function(e){if(e.target===this)closeUserModal();});
+  loadUserInfo().then(()=>loadMembers());
 </script>
 </body>
 </html>
