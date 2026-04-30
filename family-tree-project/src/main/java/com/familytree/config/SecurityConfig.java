@@ -1,18 +1,15 @@
 package com.familytree.config;
 
-import com.familytree.service.UserService;
+import com.familytree.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import com.familytree.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 
 @Configuration
 @EnableWebSecurity
@@ -20,10 +17,6 @@ public class SecurityConfig {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    @Lazy
-    private UserService userService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,8 +38,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login.html", "/api/auth/**").permitAll()
-                        .requestMatchers("/api/family/**").authenticated()
+                        .requestMatchers("/login.html", "/api/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -62,10 +54,5 @@ public class SecurityConfig {
                         .permitAll()
                 );
         return http.build();
-    }
-
-    @PostConstruct
-    public void init() {
-        userService.initAdminUser();
     }
 }
